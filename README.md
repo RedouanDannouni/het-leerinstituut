@@ -4,6 +4,12 @@ Werkend Next.js/TypeScript-fundament voor een rustig B2B-platform waarmee Het Le
 
 **inloggen → rol-cockpit → observeren → AI-concept bewerken/goedkeuren → rapporteren/exporteren**.
 
+## Identiteit
+
+Wie Het Leerinstituut is en hoe die identiteit doorwerkt in de productkeuzes, teksten,
+toon en huisstijl van dit platform staat in [`identiteit.md`](./identiteit.md). Gebruik
+dat document als toetssteen bij nieuwe schermen, copy, rapporttemplates en AI-prompts.
+
 ## Stack
 
 - Next.js App Router + React + TypeScript
