@@ -16,22 +16,31 @@
   --color-amber-600: #b7791f;
   --color-red-600: #c24141;
   --color-purple-600: #7c3aed;
+  --brand-slate: #2f6274;
+  --brand-blue: #0e6a8c;
+  --brand-ink: #142930;
+  --brand-mint: #38c9a6;
+  --brand-yellow: #ffd000;
+  --brand-black: #000000;
+  --brand-white: #ffffff;
+  --brand-background: #ecfaff;
 
   /* Semantic tokens */
-  --color-background: var(--color-neutral-50);
-  --color-surface: var(--color-neutral-0);
-  --color-surface-muted: var(--color-neutral-100);
-  --color-border: var(--color-neutral-200);
-  --color-border-strong: var(--color-neutral-300);
-  --color-text: var(--color-neutral-900);
-  --color-text-muted: var(--color-neutral-500);
-  --color-primary: var(--color-blue-600);
-  --color-primary-strong: var(--color-blue-700);
+  --color-background: var(--brand-background);
+  --color-surface: var(--brand-white);
+  --color-surface-muted: #f6fdff;
+  --color-border: #cceaf2;
+  --color-border-strong: #9fcad8;
+  --color-text: var(--brand-ink);
+  --color-text-muted: var(--brand-slate);
+  --color-primary: var(--brand-blue);
+  --color-primary-strong: var(--brand-ink);
+  --color-accent: var(--brand-mint);
   --color-success: var(--color-green-600);
-  --color-warning: var(--color-amber-600);
+  --color-warning: #8f6f00;
   --color-danger: var(--color-red-600);
-  --color-info: var(--color-purple-600);
-  --color-focus: #0f766e;
+  --color-info: var(--brand-slate);
+  --color-focus: var(--brand-blue);
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;

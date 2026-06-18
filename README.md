@@ -76,3 +76,10 @@ De Playwright e2e-test valideert de kernflow op desktop- en tabletviewport:
 - AI is in dit fundament een lokale deterministische conceptgenerator. Er gaat geen data naar externe AI-diensten.
 - Persistentie is lokaal/prototypegericht, maar alle schoolgebonden objecten dragen een `tenantId` en UI-data loopt via centrale selectors.
 - De design-tokenlaag maakt latere huisstijl/branding mogelijk zonder componenten om te bouwen.
+
+## Blueprint en UI-referenties
+
+- Initiële productblueprint: [`docs/blueprint/initial-product-blueprint.md`](docs/blueprint/initial-product-blueprint.md)
+- UX research synthesis: [`docs/blueprint/ux-research-synthesis.md`](docs/blueprint/ux-research-synthesis.md)
+- Thema/palette: [`docs/design/theme.md`](docs/design/theme.md)
+- Visuele referenties uit de aangeleverde afbeeldingen: [`docs/design/reference-board.md`](docs/design/reference-board.md)
