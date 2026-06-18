@@ -1,5 +1,6 @@
 import { canViewRawObservations } from "./permissions";
 import { auditEvents, materials, observations, projects, reports, tenants, users } from "./seed-data";
+import { scoreLabel } from "@/lib/observations/scoring";
 import type { CockpitMetric, LessonMaterial, Observation, Project, Report, SessionContext, TenantId } from "./types";
 
 function scopedTenantIds(context: SessionContext): TenantId[] {
@@ -60,8 +61,29 @@ export function getSchoolLeaderMetrics(context: SessionContext): CockpitMetric[]
   ];
 }
 
+const GROWTH_PHASES = ["Startpunt", "In ontwikkeling", "Stevig zichtbaar", "Voorbeeldpraktijk"] as const;
+
+export function getPhaseDistribution(context: SessionContext): { label: string; value: number }[] {
+  const tenantObservations = observations.filter((observation) => observation.tenantId === context.user.tenantId);
+  const scored = tenantObservations
+    .flatMap((observation) => observation.criteria)
+    .filter((criterion) => criterion.score !== null);
+
+  const counts = new Map<string, number>(GROWTH_PHASES.map((phase) => [phase, 0]));
+  scored.forEach((criterion) => {
+    const phase = scoreLabel(criterion.score);
+    counts.set(phase, (counts.get(phase) ?? 0) + 1);
+  });
+
+  return GROWTH_PHASES.map((label) => ({ label, value: counts.get(label) ?? 0 }));
+}
+
 export function getTeacherName(userId: string) {
   return users.find((user) => user.id === userId)?.name ?? "Onbekende docent";
+}
+
+export function getUserInitials(userId: string) {
+  return users.find((user) => user.id === userId)?.avatarInitials ?? "··";
 }
 
 export function getProjectTitle(projectId: string) {

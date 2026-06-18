@@ -6,6 +6,7 @@ import { SchoolLeiderCockpit } from "@/components/cockpits/SchoolLeiderCockpit";
 import { SchoolOpleiderCockpit } from "@/components/cockpits/SchoolOpleiderCockpit";
 import { useRequireSession } from "@/lib/auth/session";
 import { roleIntents, roleLabels } from "@/lib/domain/roles";
+import { brandAssets } from "@/lib/brand";
 
 export default function CockpitPage() {
   const { context } = useRequireSession();
@@ -21,12 +22,13 @@ export default function CockpitPage() {
 
   return (
     <div className="page">
-      <header className="page-header">
+      <header className="cockpit-hero">
         <div>
-          <p className="eyebrow">{roleLabels[context.user.role]} cockpit</p>
+          <p className="eyebrow eyebrow-on-dark">{roleLabels[context.user.role]} cockpit</p>
           <h1>Goedemorgen, {context.user.name.split(" ")[0]}.</h1>
-          <p className="muted">{roleIntents[context.user.role]}</p>
+          <p>{roleIntents[context.user.role]}</p>
         </div>
+        <img className="cockpit-hero-mark" src={brandAssets.icon.white} alt="" aria-hidden />
       </header>
       {cockpit}
     </div>

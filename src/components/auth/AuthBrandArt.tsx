@@ -1,7 +1,6 @@
 /**
  * Decoratief merkbeeld voor het login-paneel: de opwaartse "swoosh" uit de
- * huisstijl van Het Leerinstituut die als rustige golf door het paneel loopt.
- * Een tweede, vage swoosh hoog in beeld geeft diepte zonder af te leiden.
+ * huisstijl van Het Leerinstituut die als rustige, doorzichtige golf door het paneel loopt.
  */
 
 // Het beeldmerk/swoosh-pad uit /public/brand/icon (viewBox 0 0 388 307).
@@ -18,14 +17,8 @@ export function AuthBrandArt() {
         preserveAspectRatio="xMidYMid slice"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Vage swoosh hoog in beeld voor diepte */}
         <g className="auth-art-swoosh auth-art-swoosh--ghost">
           <path transform="translate(70 -250) scale(2.25)" d={SWOOSH} fill="#ffffff" />
-        </g>
-
-        {/* Hoofd-swoosh die door het paneel sweept */}
-        <g className="auth-art-swoosh auth-art-swoosh--hero">
-          <path transform="translate(-44 -70) scale(1.62)" d={SWOOSH} fill="#ffffff" />
         </g>
       </svg>
     </div>

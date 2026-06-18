@@ -1,14 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { notFound } from "next/navigation";
 import { useRequireSession } from "@/lib/auth/session";
 import { can } from "@/lib/domain/permissions";
 import { roleLabels } from "@/lib/domain/roles";
 import { tenants, users } from "@/lib/domain/seed-data";
 import { Badge } from "@/components/ui/Badge";
+import { InviteUserForm } from "@/components/auth/InviteUserForm";
+import { PendingInvitationsList } from "@/components/auth/PendingInvitationsList";
 
 export default function AdminUsersPage() {
   const { context } = useRequireSession();
+  const [refreshKey, setRefreshKey] = useState(0);
   if (!context) return null;
   if (!can(context.user.role, "view:admin")) notFound();
 
@@ -21,6 +25,15 @@ export default function AdminUsersPage() {
           <p className="muted">Rollen zijn expliciet; toegang loopt via de schoolomgeving.</p>
         </div>
       </header>
+      <div className="grid grid-2" style={{ marginBottom: "24px", alignItems: "start" }}>
+        <InviteUserForm
+          tenants={tenants}
+          defaultTenantId={context.tenant.id}
+          inviterName={context.user.name}
+          onSent={() => setRefreshKey((key) => key + 1)}
+        />
+        <PendingInvitationsList tenantId={context.tenant.id} refreshKey={refreshKey} />
+      </div>
       <div className="table-wrap">
         <table className="table">
           <thead>
