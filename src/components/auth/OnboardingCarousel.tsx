@@ -311,11 +311,11 @@ function PathIllustration() {
   return (
     <svg viewBox="0 0 340 220" className="auth-carousel-svg" role="img" aria-hidden style={{ overflow: "visible" }}>
       <style>{`
-        .s3-flow{animation:s3-flow 1.9s linear infinite}
+        .s3-flow{animation:s3-flow 2.4s linear infinite}
         .s3-pin{animation:s3-pin 3s ease-in-out infinite}
         .s3-wave{transform-box:fill-box;transform-origin:left center;animation:s3-wave 2.2s ease-in-out infinite}
         .s3-glow{transform-box:fill-box;transform-origin:center;animation:s3-glow 3.5s ease-in-out infinite}
-        @keyframes s3-flow{to{stroke-dashoffset:-40}}
+        @keyframes s3-flow{to{stroke-dashoffset:-37.5}}
         @keyframes s3-pin{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
         @keyframes s3-wave{0%,100%{transform:skewX(0)}50%{transform:skewX(-9deg)}}
         @keyframes s3-glow{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:.8;transform:scale(1.12)}}
