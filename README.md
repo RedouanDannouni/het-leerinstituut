@@ -85,6 +85,8 @@ De Playwright e2e-test valideert de kernflow op desktop- en tabletviewport:
 
 ## Blueprint en UI-referenties
 
+- PRD v2 (traject, planning & rollen): [`docs/prd/platform-prd.md`](docs/prd/platform-prd.md)
+- TDD v2 (datamodel, RLS, migraties): [`docs/tdd/platform-tdd.md`](docs/tdd/platform-tdd.md)
 - Initiële productblueprint: [`docs/blueprint/initial-product-blueprint.md`](docs/blueprint/initial-product-blueprint.md)
 - UX research synthesis: [`docs/blueprint/ux-research-synthesis.md`](docs/blueprint/ux-research-synthesis.md)
 - Thema/palette: [`docs/design/theme.md`](docs/design/theme.md)

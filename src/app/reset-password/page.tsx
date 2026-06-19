@@ -1,14 +1,20 @@
+import { AuthAsidePanel } from "@/components/auth/AuthAsidePanel";
 import { ResetPasswordForm } from "@/components/auth/PasswordResetForms";
 
 export default function ResetPasswordPage() {
   return (
-    <main id="main" className="page">
-      <section className="stack" style={{ maxWidth: 560, margin: "8vh auto" }}>
-        <p className="eyebrow">Toegang herstellen</p>
-        <h1>Kies een nieuw wachtwoord.</h1>
-        <p className="muted">Gebruik minimaal acht tekens. In productie komt hier beleid voor MFA en sessiebeheer bij.</p>
-        <ResetPasswordForm />
-      </section>
+    <main id="main" className="auth-screen">
+      <div className="auth-shell">
+        <AuthAsidePanel
+          title="Een nieuw"
+          accent="wachtwoord."
+          description="Kies een sterk wachtwoord dat je nergens anders gebruikt. Daarna kun je direct verder in je schoolomgeving."
+        />
+
+        <section className="auth-main">
+          <ResetPasswordForm />
+        </section>
+      </div>
     </main>
   );
 }

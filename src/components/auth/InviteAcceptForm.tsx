@@ -3,47 +3,14 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Building2, Check, Eye, EyeOff, ShieldCheck, X } from "lucide-react";
+import { Check, Eye, EyeOff, X } from "lucide-react";
 import { brandAssets } from "@/lib/brand";
+import { evaluatePassword } from "@/lib/auth/password";
 
 export interface InviteView {
   email: string;
   roleLabel: string;
   tenantName: string;
-}
-
-interface PasswordStrength {
-  score: number;
-  label: string;
-  level: "leeg" | "zwak" | "matig" | "goed" | "sterk";
-  checks: { label: string; met: boolean }[];
-}
-
-function evaluatePassword(password: string): PasswordStrength {
-  const checks = [
-    { label: "Minimaal 8 tekens", met: password.length >= 8 },
-    { label: "Hoofd- en kleine letter", met: /[a-z]/.test(password) && /[A-Z]/.test(password) },
-    { label: "Minimaal 1 cijfer", met: /\d/.test(password) },
-    { label: "Minimaal 1 symbool", met: /[^A-Za-z0-9]/.test(password) },
-  ];
-
-  if (!password) {
-    return { score: 0, label: "Nog geen wachtwoord", level: "leeg", checks };
-  }
-
-  let score = checks.filter((check) => check.met).length;
-  if (password.length >= 12 && score >= 3) score = 4;
-
-  const level = ([, "zwak", "zwak", "matig", "sterk"] as const)[score] ?? "zwak";
-  const labelMap: Record<PasswordStrength["level"], string> = {
-    leeg: "Nog geen wachtwoord",
-    zwak: "Zwak wachtwoord",
-    matig: "Redelijk wachtwoord",
-    goed: "Goed wachtwoord",
-    sterk: "Sterk wachtwoord",
-  };
-
-  return { score, label: labelMap[level], level, checks };
 }
 
 export function InviteAcceptForm({ invite, token }: { invite: InviteView | null; token: string }) {
@@ -121,24 +88,14 @@ export function InviteAcceptForm({ invite, token }: { invite: InviteView | null;
         <p className="muted">Controleer je rol en schoolomgeving en stel je wachtwoord in.</p>
       </header>
 
-      <div className="auth-invite-card">
-        <div className="auth-invite-row">
-          <span className="auth-invite-icon" aria-hidden>
-            <Building2 size={18} />
-          </span>
-          <div className="auth-invite-text">
-            <span className="auth-invite-label">Schoolomgeving</span>
-            <span className="auth-invite-value">{invite.tenantName}</span>
-          </div>
+      <div className="auth-invite-card" aria-label="Uitnodigingsdetails">
+        <div className="auth-invite-meta">
+          <span className="auth-invite-label">Schoolomgeving</span>
+          <span className="auth-invite-value">{invite.tenantName}</span>
         </div>
-        <div className="auth-invite-row">
-          <span className="auth-invite-icon" aria-hidden>
-            <ShieldCheck size={18} />
-          </span>
-          <div className="auth-invite-text">
-            <span className="auth-invite-label">Jouw rol</span>
-            <span className="auth-invite-value">{invite.roleLabel}</span>
-          </div>
+        <div className="auth-invite-meta">
+          <span className="auth-invite-label">Jouw rol</span>
+          <span className="auth-invite-value">{invite.roleLabel}</span>
         </div>
       </div>
 
@@ -221,7 +178,7 @@ export function InviteAcceptForm({ invite, token }: { invite: InviteView | null;
         <ul className="pw-checklist">
           {strength.checks.map((check) => (
             <li key={check.label} className={check.met ? "is-met" : ""}>
-              {check.met ? <Check size={14} aria-hidden /> : <X size={14} aria-hidden />}
+              {check.met ? <Check size={12} aria-hidden /> : <X size={12} aria-hidden />}
               {check.label}
             </li>
           ))}
