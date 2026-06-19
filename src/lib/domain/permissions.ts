@@ -1,3 +1,4 @@
+import { isInstituteStaff } from "./roles";
 import type { Role } from "./types";
 
 export type Permission =
@@ -14,6 +15,7 @@ export type Permission =
   | "view:observations"
   | "edit:observations"
   | "approve:summary"
+  | "view:forms"
   | "view:reports"
   | "edit:reports"
   | "export:reports"
@@ -22,7 +24,7 @@ export type Permission =
   | "view:settings";
 
 const matrix: Record<Role, Permission[]> = {
-  school_opleider: [
+  coach: [
     "view:cockpit",
     "view:projects",
     "view:materials",
@@ -36,6 +38,7 @@ const matrix: Record<Role, Permission[]> = {
     "view:observations",
     "edit:observations",
     "approve:summary",
+    "view:forms",
     "view:reports",
     "edit:reports",
     "export:reports",
@@ -47,6 +50,7 @@ const matrix: Record<Role, Permission[]> = {
     "view:materials",
     "view:paths",
     "assign:paths",
+    "view:forms",
     "view:reports",
     "export:reports",
     "view:settings",
@@ -62,12 +66,14 @@ const matrix: Record<Role, Permission[]> = {
     "edit:paths",
     "publish:paths",
     "assign:paths",
+    "view:forms",
     "view:settings",
   ],
   admin: [
     "view:cockpit",
     "view:projects",
     "view:materials",
+    "edit:materials",
     "edit:lessons",
     "publish:lessons",
     "view:paths",
@@ -75,11 +81,31 @@ const matrix: Record<Role, Permission[]> = {
     "publish:paths",
     "assign:paths",
     "view:observations",
+    "view:forms",
     "view:reports",
     "edit:reports",
     "export:reports",
     "view:admin",
     "manage:admin",
+    "view:settings",
+  ],
+  planner: [
+    "view:cockpit",
+    "view:projects",
+    "view:materials",
+    "edit:materials",
+    "edit:lessons",
+    "publish:lessons",
+    "view:paths",
+    "edit:paths",
+    "publish:paths",
+    "assign:paths",
+    "view:observations",
+    "view:forms",
+    "view:reports",
+    "edit:reports",
+    "export:reports",
+    "view:admin",
     "view:settings",
   ],
 };
@@ -89,5 +115,5 @@ export function can(role: Role, permission: Permission) {
 }
 
 export function canViewRawObservations(role: Role) {
-  return role === "school_opleider" || role === "admin";
+  return isInstituteStaff(role);
 }

@@ -21,7 +21,7 @@ export const users: User[] = [
     id: "u-opleider-noord",
     name: "Sanne de Vries",
     email: "sanne@leerinstituut.test",
-    role: "school_opleider",
+    role: "coach",
     tenantId: "school-noord",
     avatarInitials: "SV",
   },
@@ -53,7 +53,7 @@ export const users: User[] = [
     id: "u-opleider-zuid",
     name: "Ilias El Amrani",
     email: "ilias@leerinstituut.test",
-    role: "school_opleider",
+    role: "coach",
     tenantId: "school-zuid",
     avatarInitials: "IE",
   },
@@ -64,6 +64,14 @@ export const users: User[] = [
     role: "docent",
     tenantId: "school-zuid",
     avatarInitials: "MD",
+  },
+  {
+    id: "u-planner",
+    name: "Joost Pietersen",
+    email: "planner@leerinstituut.test",
+    role: "planner",
+    tenantId: "instituut",
+    avatarInitials: "JP",
   },
 ];
 
@@ -127,7 +135,7 @@ export const materials: LessonMaterial[] = [
     type: "text",
     description: "Voorbereiding met lesdoel, begeleide inoefening en exit-ticket.",
     updatedAt: "2026-06-17T09:12:00Z",
-    sharedWithRole: ["docent", "school_opleider"],
+    sharedWithRole: ["docent", "coach"],
   },
   {
     id: "m-noord-feedback",
@@ -138,7 +146,7 @@ export const materials: LessonMaterial[] = [
     type: "video",
     description: "Korte clip met feedbackvragen op procesniveau.",
     updatedAt: "2026-06-14T13:40:00Z",
-    sharedWithRole: ["docent", "school_opleider", "school_leider"],
+    sharedWithRole: ["docent", "coach", "school_leider"],
   },
   {
     id: "m-zuid-routines",
@@ -149,7 +157,7 @@ export const materials: LessonMaterial[] = [
     type: "audio",
     description: "Reflectie van het team op routines aan het begin van de les.",
     updatedAt: "2026-06-15T10:00:00Z",
-    sharedWithRole: ["docent", "school_opleider"],
+    sharedWithRole: ["docent", "coach"],
   },
 ];
 

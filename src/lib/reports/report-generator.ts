@@ -27,7 +27,7 @@ export function createReportFromObservation(observation: Observation): Report {
         content: "Trendweergave is geaggregeerd en bedoeld als gespreksondersteuning, niet als ranglijst.",
       },
       { id: "actions", type: "actions", title: "Acties", content: "1. Leg één concrete vervolgstap vast. 2. Plan een korte terugblik na twee weken." },
-      { id: "agreements", type: "agreements", title: "Afspraken", content: "Bespreek dit rapport met schoolleider, schoolopleider en betrokken docent." },
+      { id: "agreements", type: "agreements", title: "Afspraken", content: "Bespreek dit rapport met schoolleider, coach en betrokken docent." },
     ],
   };
 }

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight, CalendarClock, FileText, LayoutList, Plus } from "lucide-react";
 import { useRequireSession } from "@/lib/auth/session";
 import { getDemoReports } from "@/lib/reports/report-generator";
+import { isInstituteStaff } from "@/lib/domain/roles";
 import type { Report } from "@/lib/domain/types";
 import { Badge } from "@/components/ui/Badge";
 
@@ -21,7 +22,9 @@ export default function ReportsPage() {
   useEffect(() => setReports(getDemoReports()), []);
   if (!context) return null;
 
-  const visibleReports = reports.filter((report) => context.user.role === "admin" || report.tenantId === context.user.tenantId);
+  const visibleReports = reports.filter(
+    (report) => isInstituteStaff(context.user.role) || report.tenantId === context.user.tenantId,
+  );
 
   return (
     <div className="page">

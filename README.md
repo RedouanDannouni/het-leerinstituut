@@ -31,19 +31,21 @@ Open daarna `http://localhost:3000`.
 
 De loginpagina laat je wisselen tussen:
 
-- Sanne de Vries — Schoolopleider — OBS De Noordster
+- Sanne de Vries — Coach — OBS De Noordster
 - Murat Kaya — Schoolleider — OBS De Noordster
 - Eva Jansen — Docent — OBS De Noordster
 - Nora Bakker — Admin — Het Leerinstituut
-- Ilias El Amrani — Schoolopleider — KC Het Kompas
+- Ilias El Amrani — Coach — KC Het Kompas
 - Mila van Dijk — Docent — KC Het Kompas
+- Joost Pietersen — Planner — Het Leerinstituut
 
 Gebruik deze rollen om te controleren dat:
 
 - elke rol een eigen cockpit heeft;
+- coach, planner en admin (instituutsstaf) toegang hebben tot álle scholen;
 - schoolleiders alleen aggregaten, trends, acties en rapporten zien;
 - ruwe observatiedata en docent-ranglijsten niet zichtbaar zijn voor schoolleiders;
-- schooldata per tenant gefilterd wordt.
+- schooldata per tenant gefilterd wordt voor schoolleider en docent.
 
 ## Belangrijkste routes
 
@@ -67,7 +69,7 @@ npm run build
 
 De Playwright e2e-test valideert de kernflow op desktop- en tabletviewport:
 
-1. schoolopleider logt in;
+1. coach logt in;
 2. vult observatiecriteria;
 3. ziet autosave;
 4. genereert en bewerkt AI-concept;

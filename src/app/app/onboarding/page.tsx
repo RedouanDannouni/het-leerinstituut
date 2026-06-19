@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 
 const steps = {
-  school_opleider: ["Controleer je open observaties.", "Start of herstel een conceptformulier.", "Keur een AI-concept pas goed na eigen bewerking."],
+  coach: ["Controleer je open observaties.", "Start of herstel een conceptformulier.", "Keur een AI-concept pas goed na eigen bewerking."],
   school_leider: ["Bekijk voortgang op hoofdlijnen.", "Gebruik gespreksonderwerpen als agenda.", "Download een rapport zonder ruwe observatiedata."],
   docent: ["Bekijk je eigen materiaal.", "Lees feedback als ontwikkelinput.", "Leg afspraken vast voor de volgende les."],
   admin: ["Controleer scholen en statussen.", "Nodig gebruikers uit met de juiste rol.", "Bekijk auditlog bij exports en wijzigingen."],
+  planner: ["Overzie trajecten over alle scholen.", "Plan inzet en koppel coaches aan scholen.", "Bewaak voortgang en knelpunten centraal."],
 };
 
 export default function OnboardingPage() {

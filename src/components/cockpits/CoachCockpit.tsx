@@ -6,7 +6,7 @@ import { Card, CardHeader } from "@/components/ui/Card";
 import { getProjectTitle, getTeacherName, getVisibleObservations, getVisibleProjects, getVisibleReports } from "@/lib/domain/selectors";
 import type { SessionContext } from "@/lib/domain/types";
 
-export function SchoolOpleiderCockpit({ context }: { context: SessionContext }) {
+export function CoachCockpit({ context }: { context: SessionContext }) {
   const observations = getVisibleObservations(context);
   const projects = getVisibleProjects(context);
   const reports = getVisibleReports(context);
@@ -17,7 +17,7 @@ export function SchoolOpleiderCockpit({ context }: { context: SessionContext }) 
       <div className="grid grid-4">
         <KpiCard metric={{ label: "Open observaties", value: String(observations.length), context: "Inclusief concepten", trend: "stable" }} />
         <KpiCard metric={{ label: "Conceptformulieren", value: String(drafts.length), context: "Autosave actief", trend: "down" }} />
-        <KpiCard metric={{ label: "Actieve projecten", value: String(projects.length), context: "Binnen jouw school", trend: "up" }} />
+        <KpiCard metric={{ label: "Actieve projecten", value: String(projects.length), context: "Over al jouw scholen", trend: "up" }} />
         <KpiCard metric={{ label: "Recente rapporten", value: String(reports.length), context: "Gereed voor gesprek", trend: "up" }} />
       </div>
       <div className="grid grid-2">

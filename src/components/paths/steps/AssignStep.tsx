@@ -85,7 +85,7 @@ export function AssignStep({
             </div>
           </div>
         ) : (
-          <p className="muted">Je hebt geen rechten om toe te wijzen. Vraag een schoolopleider of teamleider.</p>
+          <p className="muted">Je hebt geen rechten om toe te wijzen. Vraag een coach of teamleider.</p>
         )}
       </div>
 

@@ -52,11 +52,14 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       .single();
     if (error || !data || !data.tenant_id) return null;
     const name = data.full_name ?? data.email ?? fallbackEmail ?? "Gebruiker";
+    // Compat: oude profielen kunnen nog de rolwaarde "school_opleider" bevatten
+    // tot de data-migratie naar "coach" is gedraaid.
+    const role = (data.role === "school_opleider" ? "coach" : data.role) as Role;
     return {
       id: data.id,
       email: data.email ?? fallbackEmail ?? "",
       name,
-      role: data.role as Role,
+      role,
       tenantId: data.tenant_id as TenantId,
       avatarInitials: initialsFrom(name),
     };

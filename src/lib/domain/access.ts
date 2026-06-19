@@ -1,3 +1,4 @@
+import { isInstituteStaff } from "./roles";
 import { tenants } from "./seed-data";
 import type { SessionContext, TenantId, User } from "./types";
 
@@ -14,7 +15,7 @@ export function createSessionContext(user: User): SessionContext {
 }
 
 export function canAccessTenant(context: SessionContext, tenantId: TenantId) {
-  return context.user.role === "admin" || context.user.tenantId === tenantId;
+  return isInstituteStaff(context.user.role) || context.user.tenantId === tenantId;
 }
 
 export function assertTenantAccess(context: SessionContext, tenantId: TenantId) {

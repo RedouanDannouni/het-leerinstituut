@@ -1,4 +1,4 @@
-export type Role = "school_opleider" | "school_leider" | "docent" | "admin";
+export type Role = "coach" | "school_leider" | "docent" | "admin" | "planner";
 
 export type TenantId = "school-noord" | "school-zuid" | "instituut";
 

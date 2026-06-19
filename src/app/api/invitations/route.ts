@@ -10,7 +10,7 @@ import type { Role, TenantId } from "@/lib/domain/types";
 export const runtime = "nodejs";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const VALID_ROLES: Role[] = ["school_opleider", "school_leider", "docent", "admin"];
+const VALID_ROLES: Role[] = ["coach", "school_leider", "docent", "admin", "planner"];
 
 export async function GET(request: Request) {
   const tenantId = new URL(request.url).searchParams.get("tenantId") as TenantId | null;

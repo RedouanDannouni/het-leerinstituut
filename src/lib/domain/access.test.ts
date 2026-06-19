@@ -11,12 +11,23 @@ function user(id: string) {
 }
 
 describe("tenant and role selectors", () => {
-  it("isolates school-scoped projects by tenant", () => {
-    const noord = getVisibleProjects(user("u-opleider-noord"));
-    const zuid = getVisibleProjects(user("u-opleider-zuid"));
+  it("isolates school-bound roles (leider/docent) to their own tenant", () => {
+    const docentNoord = getVisibleProjects(user("u-docent-noord"));
+    const docentZuid = getVisibleProjects(user("u-docent-zuid"));
 
-    expect(noord.map((project) => project.tenantId)).toEqual(["school-noord"]);
-    expect(zuid.map((project) => project.tenantId)).toEqual(["school-zuid"]);
+    expect(docentNoord.map((project) => project.tenantId)).toEqual(["school-noord"]);
+    expect(docentZuid.map((project) => project.tenantId)).toEqual(["school-zuid"]);
+  });
+
+  it("gives institute staff (opleider/planner/admin) access to all schools", () => {
+    const everyTenant = ["school-noord", "school-zuid", "instituut"];
+    for (const id of ["u-opleider-noord", "u-planner", "u-admin"]) {
+      const visible = new Set(getVisibleProjects(user(id)).map((project) => project.tenantId));
+      // Instituutsstaf ziet projecten van meerdere scholen, niet alleen de eigen tenant.
+      expect(visible.has("school-noord")).toBe(true);
+      expect(visible.has("school-zuid")).toBe(true);
+      expect(everyTenant).toEqual(expect.arrayContaining([...visible]));
+    }
   });
 
   it("hides raw observations from school leaders", () => {

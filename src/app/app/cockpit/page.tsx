@@ -3,7 +3,7 @@
 import { AdminCockpit } from "@/components/cockpits/AdminCockpit";
 import { DocentCockpit } from "@/components/cockpits/DocentCockpit";
 import { SchoolLeiderCockpit } from "@/components/cockpits/SchoolLeiderCockpit";
-import { SchoolOpleiderCockpit } from "@/components/cockpits/SchoolOpleiderCockpit";
+import { CoachCockpit } from "@/components/cockpits/CoachCockpit";
 import { useRequireSession } from "@/lib/auth/session";
 import { roleIntents, roleLabels } from "@/lib/domain/roles";
 import { brandAssets } from "@/lib/brand";
@@ -14,10 +14,11 @@ export default function CockpitPage() {
   if (!context) return null;
 
   const cockpit = {
-    school_opleider: <SchoolOpleiderCockpit context={context} />,
+    coach: <CoachCockpit context={context} />,
     school_leider: <SchoolLeiderCockpit context={context} />,
     docent: <DocentCockpit context={context} />,
     admin: <AdminCockpit />,
+    planner: <AdminCockpit />,
   }[context.user.role];
 
   return (
@@ -30,7 +31,7 @@ export default function CockpitPage() {
         </div>
         <img className="cockpit-hero-mark" src={brandAssets.icon.white} alt="" aria-hidden />
       </header>
-      {cockpit}
+      <div className="cq">{cockpit}</div>
     </div>
   );
 }

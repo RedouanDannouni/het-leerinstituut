@@ -240,6 +240,301 @@ export type Database = {
           },
         ]
       }
+      leerlingfeedback: {
+        Row: {
+          b1_q1: number | null
+          b1_q2: number | null
+          b1_q3: number | null
+          b1_q4: number | null
+          b2_q5: number | null
+          b2_q6: number | null
+          b2_q7: number | null
+          b2_q8: number | null
+          b2_q9: number | null
+          b3_q10: number | null
+          b3_q11: number | null
+          b3_q12: number | null
+          b3_q13: number | null
+          b4_q14: number | null
+          b4_q15: number | null
+          b4_q16: number | null
+          b4_q17: number | null
+          b4_q18: number | null
+          b5_q19: number | null
+          b5_q20: number | null
+          b5_q21: number | null
+          b5_q22: number | null
+          b5_q23: number | null
+          b6_q24: number | null
+          b6_q25: number | null
+          b6_q26: number | null
+          b6_q27: number | null
+          b6_q28: number | null
+          created_at: string
+          created_by: string | null
+          datum_leerlingfeedback: string | null
+          gender: string | null
+          id: string
+          klas: string | null
+          leeftijd: number | null
+          schoolnaam: string | null
+          tenant_id: string | null
+          tijdstempel: string
+        }
+        Insert: {
+          b1_q1?: number | null
+          b1_q2?: number | null
+          b1_q3?: number | null
+          b1_q4?: number | null
+          b2_q5?: number | null
+          b2_q6?: number | null
+          b2_q7?: number | null
+          b2_q8?: number | null
+          b2_q9?: number | null
+          b3_q10?: number | null
+          b3_q11?: number | null
+          b3_q12?: number | null
+          b3_q13?: number | null
+          b4_q14?: number | null
+          b4_q15?: number | null
+          b4_q16?: number | null
+          b4_q17?: number | null
+          b4_q18?: number | null
+          b5_q19?: number | null
+          b5_q20?: number | null
+          b5_q21?: number | null
+          b5_q22?: number | null
+          b5_q23?: number | null
+          b6_q24?: number | null
+          b6_q25?: number | null
+          b6_q26?: number | null
+          b6_q27?: number | null
+          b6_q28?: number | null
+          created_at?: string
+          created_by?: string | null
+          datum_leerlingfeedback?: string | null
+          gender?: string | null
+          id?: string
+          klas?: string | null
+          leeftijd?: number | null
+          schoolnaam?: string | null
+          tenant_id?: string | null
+          tijdstempel?: string
+        }
+        Update: {
+          b1_q1?: number | null
+          b1_q2?: number | null
+          b1_q3?: number | null
+          b1_q4?: number | null
+          b2_q5?: number | null
+          b2_q6?: number | null
+          b2_q7?: number | null
+          b2_q8?: number | null
+          b2_q9?: number | null
+          b3_q10?: number | null
+          b3_q11?: number | null
+          b3_q12?: number | null
+          b3_q13?: number | null
+          b4_q14?: number | null
+          b4_q15?: number | null
+          b4_q16?: number | null
+          b4_q17?: number | null
+          b4_q18?: number | null
+          b5_q19?: number | null
+          b5_q20?: number | null
+          b5_q21?: number | null
+          b5_q22?: number | null
+          b5_q23?: number | null
+          b6_q24?: number | null
+          b6_q25?: number | null
+          b6_q26?: number | null
+          b6_q27?: number | null
+          b6_q28?: number | null
+          created_at?: string
+          created_by?: string | null
+          datum_leerlingfeedback?: string | null
+          gender?: string | null
+          id?: string
+          klas?: string | null
+          leeftijd?: number | null
+          schoolnaam?: string | null
+          tenant_id?: string | null
+          tijdstempel?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leerlingfeedback_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lesobservatie_coaches: {
+        Row: {
+          b1_analyse: string | null
+          b1_q1: number | null
+          b1_q2: number | null
+          b1_q3: number | null
+          b1_q4: number | null
+          b2_analyse: string | null
+          b2_q5: number | null
+          b2_q6: number | null
+          b2_q7: number | null
+          b2_q8: number | null
+          b2_q9: number | null
+          b3_analyse: string | null
+          b3_q10: number | null
+          b3_q11: number | null
+          b3_q12: number | null
+          b3_q13: number | null
+          b4_analyse: string | null
+          b4_q14: number | null
+          b4_q15: number | null
+          b4_q16: number | null
+          b4_q17: number | null
+          b4_q18: number | null
+          b5_analyse: string | null
+          b5_q19: number | null
+          b5_q20: number | null
+          b5_q21: number | null
+          b5_q22: number | null
+          b5_q23: number | null
+          b6_analyse: string | null
+          b6_q24: number | null
+          b6_q25: number | null
+          b6_q26: number | null
+          b6_q27: number | null
+          b6_q28: number | null
+          created_at: string
+          created_by: string | null
+          datum_observatie: string | null
+          email: string | null
+          empirische_observatie: string | null
+          id: string
+          klas: string | null
+          naam_leraar: string | null
+          naam_observant: string | null
+          schoolnaam: string | null
+          tenant_id: string | null
+          tijdstempel: string
+          tijdstip_observatie: string | null
+          type_meting: string | null
+          vak: string | null
+        }
+        Insert: {
+          b1_analyse?: string | null
+          b1_q1?: number | null
+          b1_q2?: number | null
+          b1_q3?: number | null
+          b1_q4?: number | null
+          b2_analyse?: string | null
+          b2_q5?: number | null
+          b2_q6?: number | null
+          b2_q7?: number | null
+          b2_q8?: number | null
+          b2_q9?: number | null
+          b3_analyse?: string | null
+          b3_q10?: number | null
+          b3_q11?: number | null
+          b3_q12?: number | null
+          b3_q13?: number | null
+          b4_analyse?: string | null
+          b4_q14?: number | null
+          b4_q15?: number | null
+          b4_q16?: number | null
+          b4_q17?: number | null
+          b4_q18?: number | null
+          b5_analyse?: string | null
+          b5_q19?: number | null
+          b5_q20?: number | null
+          b5_q21?: number | null
+          b5_q22?: number | null
+          b5_q23?: number | null
+          b6_analyse?: string | null
+          b6_q24?: number | null
+          b6_q25?: number | null
+          b6_q26?: number | null
+          b6_q27?: number | null
+          b6_q28?: number | null
+          created_at?: string
+          created_by?: string | null
+          datum_observatie?: string | null
+          email?: string | null
+          empirische_observatie?: string | null
+          id?: string
+          klas?: string | null
+          naam_leraar?: string | null
+          naam_observant?: string | null
+          schoolnaam?: string | null
+          tenant_id?: string | null
+          tijdstempel?: string
+          tijdstip_observatie?: string | null
+          type_meting?: string | null
+          vak?: string | null
+        }
+        Update: {
+          b1_analyse?: string | null
+          b1_q1?: number | null
+          b1_q2?: number | null
+          b1_q3?: number | null
+          b1_q4?: number | null
+          b2_analyse?: string | null
+          b2_q5?: number | null
+          b2_q6?: number | null
+          b2_q7?: number | null
+          b2_q8?: number | null
+          b2_q9?: number | null
+          b3_analyse?: string | null
+          b3_q10?: number | null
+          b3_q11?: number | null
+          b3_q12?: number | null
+          b3_q13?: number | null
+          b4_analyse?: string | null
+          b4_q14?: number | null
+          b4_q15?: number | null
+          b4_q16?: number | null
+          b4_q17?: number | null
+          b4_q18?: number | null
+          b5_analyse?: string | null
+          b5_q19?: number | null
+          b5_q20?: number | null
+          b5_q21?: number | null
+          b5_q22?: number | null
+          b5_q23?: number | null
+          b6_analyse?: string | null
+          b6_q24?: number | null
+          b6_q25?: number | null
+          b6_q26?: number | null
+          b6_q27?: number | null
+          b6_q28?: number | null
+          created_at?: string
+          created_by?: string | null
+          datum_observatie?: string | null
+          email?: string | null
+          empirische_observatie?: string | null
+          id?: string
+          klas?: string | null
+          naam_leraar?: string | null
+          naam_observant?: string | null
+          schoolnaam?: string | null
+          tenant_id?: string | null
+          tijdstempel?: string
+          tijdstip_observatie?: string | null
+          type_meting?: string | null
+          vak?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesobservatie_coaches_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lesson_progress: {
         Row: {
           completed_at: string | null
@@ -439,8 +734,8 @@ export type Database = {
       modules: {
         Row: {
           category: string
-          cover_url: string | null
           course_id: string | null
+          cover_url: string | null
           created_at: string
           created_by: string | null
           id: string
@@ -452,8 +747,8 @@ export type Database = {
         }
         Insert: {
           category?: string
-          cover_url?: string | null
           course_id?: string | null
+          cover_url?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
@@ -465,8 +760,8 @@ export type Database = {
         }
         Update: {
           category?: string
-          cover_url?: string | null
           course_id?: string | null
+          cover_url?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
@@ -627,6 +922,444 @@ export type Database = {
           },
         ]
       }
+      plc_docenten: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          dd_q1: number | null
+          dd_q10: number | null
+          dd_q11: number | null
+          dd_q12: number | null
+          dd_q13: number | null
+          dd_q14: number | null
+          dd_q15: number | null
+          dd_q16: number | null
+          dd_q17: number | null
+          dd_q18: number | null
+          dd_q19: number | null
+          dd_q2: number | null
+          dd_q20: number | null
+          dd_q21: number | null
+          dd_q22: number | null
+          dd_q23: number | null
+          dd_q24: number | null
+          dd_q25: number | null
+          dd_q26: number | null
+          dd_q27: number | null
+          dd_q28: number | null
+          dd_q29: number | null
+          dd_q3: number | null
+          dd_q30: number | null
+          dd_q31: number | null
+          dd_q32: number | null
+          dd_q33: number | null
+          dd_q34: number | null
+          dd_q35: number | null
+          dd_q36: number | null
+          dd_q37: number | null
+          dd_q38: number | null
+          dd_q39: number | null
+          dd_q4: number | null
+          dd_q40: number | null
+          dd_q41: number | null
+          dd_q42: number | null
+          dd_q43: number | null
+          dd_q44: number | null
+          dd_q5: number | null
+          dd_q6: number | null
+          dd_q7: number | null
+          dd_q8: number | null
+          dd_q9: number | null
+          geslacht: string | null
+          id: string
+          jaren_onderwijs: number | null
+          leeftijd: number | null
+          opleiding: string | null
+          schoolnaam: string | null
+          tenant_id: string | null
+          tijdstempel: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          dd_q1?: number | null
+          dd_q10?: number | null
+          dd_q11?: number | null
+          dd_q12?: number | null
+          dd_q13?: number | null
+          dd_q14?: number | null
+          dd_q15?: number | null
+          dd_q16?: number | null
+          dd_q17?: number | null
+          dd_q18?: number | null
+          dd_q19?: number | null
+          dd_q2?: number | null
+          dd_q20?: number | null
+          dd_q21?: number | null
+          dd_q22?: number | null
+          dd_q23?: number | null
+          dd_q24?: number | null
+          dd_q25?: number | null
+          dd_q26?: number | null
+          dd_q27?: number | null
+          dd_q28?: number | null
+          dd_q29?: number | null
+          dd_q3?: number | null
+          dd_q30?: number | null
+          dd_q31?: number | null
+          dd_q32?: number | null
+          dd_q33?: number | null
+          dd_q34?: number | null
+          dd_q35?: number | null
+          dd_q36?: number | null
+          dd_q37?: number | null
+          dd_q38?: number | null
+          dd_q39?: number | null
+          dd_q4?: number | null
+          dd_q40?: number | null
+          dd_q41?: number | null
+          dd_q42?: number | null
+          dd_q43?: number | null
+          dd_q44?: number | null
+          dd_q5?: number | null
+          dd_q6?: number | null
+          dd_q7?: number | null
+          dd_q8?: number | null
+          dd_q9?: number | null
+          geslacht?: string | null
+          id?: string
+          jaren_onderwijs?: number | null
+          leeftijd?: number | null
+          opleiding?: string | null
+          schoolnaam?: string | null
+          tenant_id?: string | null
+          tijdstempel?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          dd_q1?: number | null
+          dd_q10?: number | null
+          dd_q11?: number | null
+          dd_q12?: number | null
+          dd_q13?: number | null
+          dd_q14?: number | null
+          dd_q15?: number | null
+          dd_q16?: number | null
+          dd_q17?: number | null
+          dd_q18?: number | null
+          dd_q19?: number | null
+          dd_q2?: number | null
+          dd_q20?: number | null
+          dd_q21?: number | null
+          dd_q22?: number | null
+          dd_q23?: number | null
+          dd_q24?: number | null
+          dd_q25?: number | null
+          dd_q26?: number | null
+          dd_q27?: number | null
+          dd_q28?: number | null
+          dd_q29?: number | null
+          dd_q3?: number | null
+          dd_q30?: number | null
+          dd_q31?: number | null
+          dd_q32?: number | null
+          dd_q33?: number | null
+          dd_q34?: number | null
+          dd_q35?: number | null
+          dd_q36?: number | null
+          dd_q37?: number | null
+          dd_q38?: number | null
+          dd_q39?: number | null
+          dd_q4?: number | null
+          dd_q40?: number | null
+          dd_q41?: number | null
+          dd_q42?: number | null
+          dd_q43?: number | null
+          dd_q44?: number | null
+          dd_q5?: number | null
+          dd_q6?: number | null
+          dd_q7?: number | null
+          dd_q8?: number | null
+          dd_q9?: number | null
+          geslacht?: string | null
+          id?: string
+          jaren_onderwijs?: number | null
+          leeftijd?: number | null
+          opleiding?: string | null
+          schoolnaam?: string | null
+          tenant_id?: string | null
+          tijdstempel?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plc_docenten_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plc_leerlingen: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          geslacht: string | null
+          id: string
+          leeftijd: number | null
+          leerjaar: string | null
+          onderwijs_type: string | null
+          q1: number | null
+          q10: number | null
+          q11: number | null
+          q2: number | null
+          q3: number | null
+          q4: number | null
+          q5: number | null
+          q6: number | null
+          q7: number | null
+          q8: number | null
+          q9: number | null
+          schoolnaam: string | null
+          tenant_id: string | null
+          tijdstempel: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          geslacht?: string | null
+          id?: string
+          leeftijd?: number | null
+          leerjaar?: string | null
+          onderwijs_type?: string | null
+          q1?: number | null
+          q10?: number | null
+          q11?: number | null
+          q2?: number | null
+          q3?: number | null
+          q4?: number | null
+          q5?: number | null
+          q6?: number | null
+          q7?: number | null
+          q8?: number | null
+          q9?: number | null
+          schoolnaam?: string | null
+          tenant_id?: string | null
+          tijdstempel?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          geslacht?: string | null
+          id?: string
+          leeftijd?: number | null
+          leerjaar?: string | null
+          onderwijs_type?: string | null
+          q1?: number | null
+          q10?: number | null
+          q11?: number | null
+          q2?: number | null
+          q3?: number | null
+          q4?: number | null
+          q5?: number | null
+          q6?: number | null
+          q7?: number | null
+          q8?: number | null
+          q9?: number | null
+          schoolnaam?: string | null
+          tenant_id?: string | null
+          tijdstempel?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plc_leerlingen_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plc_schoolleiding: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          geslacht: string | null
+          id: string
+          jaren_onderwijs: number | null
+          leeftijd: number | null
+          opleiding: string | null
+          schoolnaam: string | null
+          sl_q1: number | null
+          sl_q10: number | null
+          sl_q11: number | null
+          sl_q12: number | null
+          sl_q13: number | null
+          sl_q14: number | null
+          sl_q15: number | null
+          sl_q16: number | null
+          sl_q17: number | null
+          sl_q18: number | null
+          sl_q19: number | null
+          sl_q2: number | null
+          sl_q20: number | null
+          sl_q21: number | null
+          sl_q22: number | null
+          sl_q23: number | null
+          sl_q24: number | null
+          sl_q25: number | null
+          sl_q26: number | null
+          sl_q27: number | null
+          sl_q28: number | null
+          sl_q29: number | null
+          sl_q3: number | null
+          sl_q30: number | null
+          sl_q31: number | null
+          sl_q32: number | null
+          sl_q33: number | null
+          sl_q34: number | null
+          sl_q35: number | null
+          sl_q36: number | null
+          sl_q37: number | null
+          sl_q38: number | null
+          sl_q39: number | null
+          sl_q4: number | null
+          sl_q40: number | null
+          sl_q41: number | null
+          sl_q42: number | null
+          sl_q43: number | null
+          sl_q44: number | null
+          sl_q5: number | null
+          sl_q6: number | null
+          sl_q7: number | null
+          sl_q8: number | null
+          sl_q9: number | null
+          tenant_id: string | null
+          tijdstempel: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          geslacht?: string | null
+          id?: string
+          jaren_onderwijs?: number | null
+          leeftijd?: number | null
+          opleiding?: string | null
+          schoolnaam?: string | null
+          sl_q1?: number | null
+          sl_q10?: number | null
+          sl_q11?: number | null
+          sl_q12?: number | null
+          sl_q13?: number | null
+          sl_q14?: number | null
+          sl_q15?: number | null
+          sl_q16?: number | null
+          sl_q17?: number | null
+          sl_q18?: number | null
+          sl_q19?: number | null
+          sl_q2?: number | null
+          sl_q20?: number | null
+          sl_q21?: number | null
+          sl_q22?: number | null
+          sl_q23?: number | null
+          sl_q24?: number | null
+          sl_q25?: number | null
+          sl_q26?: number | null
+          sl_q27?: number | null
+          sl_q28?: number | null
+          sl_q29?: number | null
+          sl_q3?: number | null
+          sl_q30?: number | null
+          sl_q31?: number | null
+          sl_q32?: number | null
+          sl_q33?: number | null
+          sl_q34?: number | null
+          sl_q35?: number | null
+          sl_q36?: number | null
+          sl_q37?: number | null
+          sl_q38?: number | null
+          sl_q39?: number | null
+          sl_q4?: number | null
+          sl_q40?: number | null
+          sl_q41?: number | null
+          sl_q42?: number | null
+          sl_q43?: number | null
+          sl_q44?: number | null
+          sl_q5?: number | null
+          sl_q6?: number | null
+          sl_q7?: number | null
+          sl_q8?: number | null
+          sl_q9?: number | null
+          tenant_id?: string | null
+          tijdstempel?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          geslacht?: string | null
+          id?: string
+          jaren_onderwijs?: number | null
+          leeftijd?: number | null
+          opleiding?: string | null
+          schoolnaam?: string | null
+          sl_q1?: number | null
+          sl_q10?: number | null
+          sl_q11?: number | null
+          sl_q12?: number | null
+          sl_q13?: number | null
+          sl_q14?: number | null
+          sl_q15?: number | null
+          sl_q16?: number | null
+          sl_q17?: number | null
+          sl_q18?: number | null
+          sl_q19?: number | null
+          sl_q2?: number | null
+          sl_q20?: number | null
+          sl_q21?: number | null
+          sl_q22?: number | null
+          sl_q23?: number | null
+          sl_q24?: number | null
+          sl_q25?: number | null
+          sl_q26?: number | null
+          sl_q27?: number | null
+          sl_q28?: number | null
+          sl_q29?: number | null
+          sl_q3?: number | null
+          sl_q30?: number | null
+          sl_q31?: number | null
+          sl_q32?: number | null
+          sl_q33?: number | null
+          sl_q34?: number | null
+          sl_q35?: number | null
+          sl_q36?: number | null
+          sl_q37?: number | null
+          sl_q38?: number | null
+          sl_q39?: number | null
+          sl_q4?: number | null
+          sl_q40?: number | null
+          sl_q41?: number | null
+          sl_q42?: number | null
+          sl_q43?: number | null
+          sl_q44?: number | null
+          sl_q5?: number | null
+          sl_q6?: number | null
+          sl_q7?: number | null
+          sl_q8?: number | null
+          sl_q9?: number | null
+          tenant_id?: string | null
+          tijdstempel?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plc_schoolleiding_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -760,12 +1493,148 @@ export type Database = {
         }
         Relationships: []
       }
+      zelfevaluatie: {
+        Row: {
+          b1_q1: number | null
+          b1_q2: number | null
+          b1_q3: number | null
+          b1_q4: number | null
+          b2_q5: number | null
+          b2_q6: number | null
+          b2_q7: number | null
+          b2_q8: number | null
+          b2_q9: number | null
+          b3_q10: number | null
+          b3_q11: number | null
+          b3_q12: number | null
+          b3_q13: number | null
+          b4_q14: number | null
+          b4_q15: number | null
+          b4_q16: number | null
+          b4_q17: number | null
+          b4_q18: number | null
+          b5_q19: number | null
+          b5_q20: number | null
+          b5_q21: number | null
+          b5_q22: number | null
+          b5_q23: number | null
+          b6_q24: number | null
+          b6_q25: number | null
+          b6_q26: number | null
+          b6_q27: number | null
+          b6_q28: number | null
+          created_at: string
+          created_by: string | null
+          datum_zelfevaluatie: string | null
+          gender: string | null
+          hoogst_genoten_opleiding: string | null
+          id: string
+          leeftijd: number | null
+          lesgroep: string | null
+          schoolnaam: string | null
+          tenant_id: string | null
+          tijdstempel: string
+        }
+        Insert: {
+          b1_q1?: number | null
+          b1_q2?: number | null
+          b1_q3?: number | null
+          b1_q4?: number | null
+          b2_q5?: number | null
+          b2_q6?: number | null
+          b2_q7?: number | null
+          b2_q8?: number | null
+          b2_q9?: number | null
+          b3_q10?: number | null
+          b3_q11?: number | null
+          b3_q12?: number | null
+          b3_q13?: number | null
+          b4_q14?: number | null
+          b4_q15?: number | null
+          b4_q16?: number | null
+          b4_q17?: number | null
+          b4_q18?: number | null
+          b5_q19?: number | null
+          b5_q20?: number | null
+          b5_q21?: number | null
+          b5_q22?: number | null
+          b5_q23?: number | null
+          b6_q24?: number | null
+          b6_q25?: number | null
+          b6_q26?: number | null
+          b6_q27?: number | null
+          b6_q28?: number | null
+          created_at?: string
+          created_by?: string | null
+          datum_zelfevaluatie?: string | null
+          gender?: string | null
+          hoogst_genoten_opleiding?: string | null
+          id?: string
+          leeftijd?: number | null
+          lesgroep?: string | null
+          schoolnaam?: string | null
+          tenant_id?: string | null
+          tijdstempel?: string
+        }
+        Update: {
+          b1_q1?: number | null
+          b1_q2?: number | null
+          b1_q3?: number | null
+          b1_q4?: number | null
+          b2_q5?: number | null
+          b2_q6?: number | null
+          b2_q7?: number | null
+          b2_q8?: number | null
+          b2_q9?: number | null
+          b3_q10?: number | null
+          b3_q11?: number | null
+          b3_q12?: number | null
+          b3_q13?: number | null
+          b4_q14?: number | null
+          b4_q15?: number | null
+          b4_q16?: number | null
+          b4_q17?: number | null
+          b4_q18?: number | null
+          b5_q19?: number | null
+          b5_q20?: number | null
+          b5_q21?: number | null
+          b5_q22?: number | null
+          b5_q23?: number | null
+          b6_q24?: number | null
+          b6_q25?: number | null
+          b6_q26?: number | null
+          b6_q27?: number | null
+          b6_q28?: number | null
+          created_at?: string
+          created_by?: string | null
+          datum_zelfevaluatie?: string | null
+          gender?: string | null
+          hoogst_genoten_opleiding?: string | null
+          id?: string
+          leeftijd?: number | null
+          lesgroep?: string | null
+          schoolnaam?: string | null
+          tenant_id?: string | null
+          tijdstempel?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zelfevaluatie_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      auth_role: { Args: never; Returns: string }
       current_tenant_id: { Args: never; Returns: string }
+      is_institute_staff: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
