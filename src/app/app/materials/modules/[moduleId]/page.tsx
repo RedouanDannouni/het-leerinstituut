@@ -12,12 +12,13 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ArrowLeft, BookOpen, GripVertical, ImagePlus, Lock, Plus, Save } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, GripVertical, ImagePlus, Lock, Plus, Save, X } from "lucide-react";
 import { useRequireSession } from "@/lib/auth/session";
 import { can } from "@/lib/domain/permissions";
 import type { Asset, Lesson, Module } from "@/lib/lessons/types";
 import { getLessonTitle } from "@/lib/lessons/helpers";
 import { createLesson, listLessons, listModules, reorderLessons, updateModule } from "@/lib/lessons/store";
+import { setMaterialsFlash, consumeMaterialsFlash } from "@/lib/lessons/flash";
 import { AssetPicker, type AssetPickerRequest } from "@/components/lessons/AssetPicker";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -33,8 +34,20 @@ export default function ModuleDetailPage({ params }: { params: Promise<{ moduleI
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [allLessons, setAllLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
-  const [savedAt, setSavedAt] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [flash, setFlash] = useState<string | null>(null);
   const [assetRequest, setAssetRequest] = useState<AssetPickerRequest | null>(null);
+
+  useEffect(() => {
+    const message = consumeMaterialsFlash();
+    if (message) setFlash(message);
+  }, []);
+
+  useEffect(() => {
+    if (!flash) return undefined;
+    const timer = window.setTimeout(() => setFlash(null), 5000);
+    return () => window.clearTimeout(timer);
+  }, [flash]);
 
   const canEdit = context ? can(context.user.role, "edit:lessons") : false;
 
@@ -73,9 +86,15 @@ export default function ModuleDetailPage({ params }: { params: Promise<{ moduleI
   const patchModule = (patch: Partial<Module>) => setMod((current) => (current ? { ...current, ...patch } : current));
 
   const saveModule = async () => {
-    if (!mod) return;
-    await updateModule(mod);
-    setSavedAt(new Date().toISOString());
+    if (!mod || saving) return;
+    setSaving(true);
+    try {
+      await updateModule(mod);
+      setMaterialsFlash(`Module "${mod.title || "Naamloze module"}" is opgeslagen.`);
+      router.push("/app/materials");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const addLesson = async () => {
@@ -98,6 +117,16 @@ export default function ModuleDetailPage({ params }: { params: Promise<{ moduleI
           {mod?.summary ? <p className="muted">{mod.summary}</p> : null}
         </div>
       </header>
+
+      {flash ? (
+        <div className="flash-banner" role="status" aria-live="polite">
+          <CheckCircle2 size={18} aria-hidden />
+          <span>{flash}</span>
+          <button type="button" className="flash-banner-dismiss" aria-label="Melding sluiten" onClick={() => setFlash(null)}>
+            <X size={16} aria-hidden />
+          </button>
+        </div>
+      ) : null}
 
       {loading ? (
         <Card>Laden…</Card>
@@ -168,12 +197,9 @@ export default function ModuleDetailPage({ params }: { params: Promise<{ moduleI
               <Field label="Samenvatting">
                 <Textarea value={mod.summary} onChange={(event) => patchModule({ summary: event.target.value })} />
               </Field>
-              <div className="cluster" style={{ justifyContent: "space-between" }}>
-                <span className="muted" style={{ fontSize: "0.85rem" }}>
-                  {savedAt ? `Opgeslagen ${new Date(savedAt).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}` : "Niet opgeslagen wijzigingen"}
-                </span>
-                <Button type="button" onClick={saveModule}>
-                  <Save size={16} aria-hidden /> Opslaan
+              <div className="cluster" style={{ justifyContent: "flex-end" }}>
+                <Button type="button" onClick={saveModule} disabled={saving}>
+                  <Save size={16} aria-hidden /> {saving ? "Opslaan…" : "Opslaan"}
                 </Button>
               </div>
             </Card>

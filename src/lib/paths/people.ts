@@ -26,8 +26,11 @@ export async function listPeople(tenantId: TenantId): Promise<Person[]> {
   if (typeof window !== "undefined") {
     try {
       const supabase = createSupabaseBrowserClient();
-      const { data: session } = await supabase.auth.getSession();
-      if (session.session?.user) {
+      const session = await Promise.race([
+        supabase.auth.getSession().then((result) => result.data.session),
+        new Promise<null>((resolve) => window.setTimeout(() => resolve(null), 3000)),
+      ]);
+      if (session?.user) {
         const { data, error } = await supabase.from("profiles").select("id, email, full_name, role").eq("tenant_id", tenantId);
         if (!error && data) {
           return data.map((row) => ({

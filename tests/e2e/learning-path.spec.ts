@@ -1,12 +1,12 @@
 import { expect, test } from "@playwright/test";
 
 test("schoolopleider bouwt een leerpad via de wizard en de publiceer-poort blokkeert bij een ongepubliceerde les", async ({ page }) => {
-  // Demo-login als Sanne (schoolopleider) via het inlogformulier.
+  // Demo-sessie als Sanne (schoolopleider) via localStorage; onboarding overslaan.
   await page.goto("/login");
-  await page.getByLabel("E-mailadres").fill("sanne@leerinstituut.test");
-  await page.getByRole("button", { name: /^inloggen$/i }).click();
-  await page.getByRole("button", { name: /naar mijn cockpit/i }).click();
-  await expect(page.getByRole("heading", { name: /goedemorgen, sanne/i })).toBeVisible();
+  await page.evaluate(() => {
+    window.localStorage.setItem("hli.active-user-id", "u-opleider-noord");
+    window.localStorage.setItem("hli.onboarding-complete", "true");
+  });
 
   await page.goto("/app/materials");
   await expect(page.getByRole("heading", { name: /lesmateriaal/i })).toBeVisible({ timeout: 30_000 });

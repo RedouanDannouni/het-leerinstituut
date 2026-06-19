@@ -32,8 +32,13 @@ async function useDb(): Promise<boolean> {
   if (typeof window === "undefined") return false;
   try {
     const supabase = createSupabaseBrowserClient();
-    const { data } = await supabase.auth.getSession();
-    cachedUseDb = Boolean(data.session?.user);
+    // Race tegen een timeout: als Supabase niet (snel) antwoordt, vallen we
+    // terug op de demo-/localStorage-modus i.p.v. eindeloos te blokkeren.
+    const session = await Promise.race([
+      supabase.auth.getSession().then((result) => result.data.session),
+      new Promise<null>((resolve) => window.setTimeout(() => resolve(null), 3000)),
+    ]);
+    cachedUseDb = Boolean(session?.user);
   } catch {
     cachedUseDb = false;
   }

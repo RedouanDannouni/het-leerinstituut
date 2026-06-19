@@ -4048,6 +4048,58 @@ a.list-row:hover {
   grid-auto-flow: row;
 }
 
+.flash-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid color-mix(in srgb, var(--color-success) 28%, white);
+  border-radius: var(--radius-card);
+  background: color-mix(in srgb, var(--color-success) 10%, white);
+  color: var(--color-success);
+  font-weight: 650;
+  font-size: 0.92rem;
+  animation: flash-in 280ms ease both;
+}
+
+.flash-banner svg:first-child {
+  flex: none;
+}
+
+.flash-banner span {
+  flex: 1;
+}
+
+.flash-banner-dismiss {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: inherit;
+  opacity: 0.7;
+}
+
+.flash-banner-dismiss:hover {
+  opacity: 1;
+  background: color-mix(in srgb, var(--color-success) 14%, white);
+}
+
+@keyframes flash-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ================================================================== */
 /* Learning Path Builder                                              */
 /* ================================================================== */

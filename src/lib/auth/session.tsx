@@ -65,10 +65,14 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let active = true;
     async function init() {
-      // 1) Echte Supabase-sessie heeft voorrang.
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      // 1) Echte Supabase-sessie heeft voorrang. We racen tegen een timeout:
+      // als Supabase traag of onbereikbaar is, mag de app niet eindeloos op de
+      // loader blijven hangen maar valt terug op de demo-/localStorage-sessie.
+      const sessionResult = await Promise.race([
+        supabase.auth.getSession().then((result) => result.data.session),
+        new Promise<null>((resolve) => window.setTimeout(() => resolve(null), 3000)),
+      ]);
+      const session = sessionResult;
       if (session?.user && active) {
         const realUser = await loadProfileUser(session.user.id, session.user.email ?? undefined);
         if (realUser && active) {

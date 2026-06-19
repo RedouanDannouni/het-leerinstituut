@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -22,6 +23,7 @@ import type { Asset, AssetKind, Block, BlockType, Lesson, LessonVersion, Module 
 import { createBlock, duplicateBlock, moveBlock } from "@/lib/lessons/blocks";
 import { countBlockIssues, validateLessonForPublish } from "@/lib/lessons/block-validate";
 import { clearLessonDraft, readLessonDraft, saveLessonDraft } from "@/lib/lessons/autosave";
+import { setMaterialsFlash } from "@/lib/lessons/flash";
 import { saveLesson, snapshotLesson } from "@/lib/lessons/store";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -53,7 +55,9 @@ export function LessonEditor({
   const [showIssues, setShowIssues] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [assetRequest, setAssetRequest] = useState<AssetPickerRequest | null>(null);
+  const [closing, setClosing] = useState(false);
   const firstRender = useRef(true);
+  const router = useRouter();
 
   const canPublish = can(context.user.role, "publish:lessons");
   const validation = useMemo(() => validateLessonForPublish(lesson), [lesson]);
@@ -132,6 +136,20 @@ export function LessonEditor({
 
   const otherLessons = lessons.filter((item) => item.id !== lesson.id);
   const issueCount = countBlockIssues(validation);
+
+  const saveAndClose = async () => {
+    if (closing) return;
+    setClosing(true);
+    try {
+      clearLessonDraft(lesson.id);
+      saveLessonDraft(lesson);
+      await saveLesson(lesson);
+      setMaterialsFlash(`Les "${lesson.title.trim() || "Naamloze les"}" is opgeslagen.`);
+      router.push(lesson.moduleId ? `/app/materials/modules/${lesson.moduleId}` : "/app/materials");
+    } finally {
+      setClosing(false);
+    }
+  };
 
   return (
     <div className="lesson-editor">
@@ -290,16 +308,8 @@ export function LessonEditor({
               />
 
               <div className="cluster" style={{ marginTop: "var(--space-4)", justifyContent: "flex-end" }}>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={async () => {
-                    saveLessonDraft(lesson);
-                    await saveLesson(lesson);
-                    setSavedAt(new Date().toISOString());
-                  }}
-                >
-                  <Save size={16} aria-hidden /> Nu opslaan
+                <Button type="button" variant="secondary" onClick={saveAndClose} disabled={closing}>
+                  <Save size={16} aria-hidden /> {closing ? "Opslaan…" : "Nu opslaan"}
                 </Button>
               </div>
             </>
