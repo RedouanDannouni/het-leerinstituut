@@ -14,7 +14,7 @@ export function createBlock(type: BlockType): Block {
     case "richText":
       return { id, type, html: "<p>Begin hier met typen…</p>" };
     case "callout":
-      return { id, type, tone: "tip", title: "Tip", text: "Een korte tip voor de leerling." };
+      return { id, type, tone: "tip", title: "Tip", text: "Een korte tip voor de docent." };
     case "quote":
       return { id, type, text: "Een citaat dat blijft hangen.", attribution: "" };
     case "list":

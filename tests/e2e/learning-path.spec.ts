@@ -42,8 +42,8 @@ test("schoolopleider bouwt een leerpad via de wizard en de publiceer-poort blokk
   // Wacht tot de metadata (titel/thumbnail) is weggeschreven vóór de preview.
   await expect(page.getByText(/opgeslagen/i)).toBeVisible({ timeout: 10_000 });
 
-  // Bekijk als leerling
-  await page.getByRole("link", { name: /als leerling/i }).click();
+  // Voorbeeldweergave
+  await page.getByRole("link", { name: /voorbeeldweergave/i }).click();
   await expect(page.getByRole("heading", { name: "E2E leerpad" })).toBeVisible();
   await expect(page.getByText(/afgerond/i)).toBeVisible();
 });

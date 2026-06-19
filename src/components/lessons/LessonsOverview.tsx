@@ -5,12 +5,14 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   BookOpen,
-  ChevronRight,
   Eye,
+  LayoutGrid,
   Layers,
+  List,
   Pencil,
   Plus,
   Search,
+  SlidersHorizontal,
   Trash2,
 } from "lucide-react";
 import type { SessionContext } from "@/lib/domain/types";
@@ -29,8 +31,11 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Select } from "@/components/ui/Form";
+import { FeaturedCourseCarousel } from "@/components/lessons/FeaturedCourseCarousel";
+import { MaterialsCourseCard } from "@/components/lessons/MaterialsCourseCard";
 
 type SortKey = "latest" | "title" | "status";
+type ViewMode = "grid" | "list";
 
 function moduleStatus(moduleId: string, lessons: Lesson[]): "published" | "draft" {
   const inModule = lessons.filter((l) => l.moduleId === moduleId);
@@ -51,6 +56,7 @@ export function LessonsOverview({ context }: { context: SessionContext }) {
   const [sort, setSort] = useState<SortKey>("latest");
   const [category, setCategory] = useState("all");
   const [addOpen, setAddOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const addRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -135,38 +141,96 @@ export function LessonsOverview({ context }: { context: SessionContext }) {
     await saveLesson(next);
   };
 
+  const courseCountLabel = useMemo(() => {
+    const total = modules.length;
+    const visible = visibleModules.length;
+    const noun = total === 1 ? "cursus" : "cursussen";
+    if (visible !== total) return `${visible} van ${total} ${noun}`;
+    return `${total} ${noun}`;
+  }, [modules.length, visibleModules.length]);
+
   if (loading) return <Card>Lessen laden…</Card>;
 
   return (
     <div className="stack">
-      {/* Toolbar */}
-      <div className="toolbar">
-        <div className="search">
-          <Search size={18} aria-hidden />
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Zoek in je cursussen…"
-            aria-label="Zoeken"
-          />
+      <header className="materials-header">
+        <div className="materials-header__title">
+          <p className="eyebrow">Lesmateriaal</p>
+          <div className="materials-header__heading">
+            <h1>Cursussen</h1>
+            <span className="materials-header__count">{courseCountLabel}</span>
+          </div>
         </div>
-        <div className="cluster">
-          <Select value={sort} onChange={(event) => setSort(event.target.value as SortKey)} aria-label="Sorteren" style={{ minWidth: 160 }}>
+
+        <div className="materials-header__controls">
+          <label className="materials-header__search">
+            <Search className="icon" size={17} aria-hidden />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Zoek in je cursussen…"
+              aria-label="Zoeken"
+            />
+          </label>
+
+          <Select
+            value={sort}
+            onChange={(event) => setSort(event.target.value as SortKey)}
+            aria-label="Sorteren"
+            className="materials-header__control materials-header__select"
+          >
             <option value="latest">Nieuwste eerst</option>
             <option value="title">Titel (A–Z)</option>
             <option value="status">Status</option>
           </Select>
-          <Select value={category} onChange={(event) => setCategory(event.target.value)} aria-label="Categorie" style={{ minWidth: 160 }}>
+
+          <Select
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+            aria-label="Categorie"
+            className="materials-header__control materials-header__select"
+          >
             <option value="all">Alle categorieën</option>
             {categories.map((cat) => (
               <option key={cat} value={cat}>{cat}</option>
             ))}
           </Select>
+
+          <button type="button" className="materials-header__control">
+            <SlidersHorizontal className="icon" size={16} aria-hidden />
+            Filteren
+          </button>
+
+          <div className="materials-header__toggle" role="group" aria-label="Weergave">
+            <button
+              type="button"
+              aria-pressed={viewMode === "grid"}
+              onClick={() => setViewMode("grid")}
+            >
+              <LayoutGrid size={16} aria-hidden />
+              Grid
+            </button>
+            <button
+              type="button"
+              aria-pressed={viewMode === "list"}
+              onClick={() => setViewMode("list")}
+            >
+              <List size={16} aria-hidden />
+              Lijst
+            </button>
+          </div>
+
           {canEdit ? (
             <div className="add-content" ref={addRef}>
-              <Button type="button" onClick={() => setAddOpen((v) => !v)} disabled={busy}>
-                <Plus size={16} aria-hidden /> Add content
-              </Button>
+              <button
+                type="button"
+                className="materials-header__primary"
+                onClick={() => setAddOpen((v) => !v)}
+                disabled={busy}
+              >
+                <Plus className="icon" size={16} aria-hidden />
+                Nieuwe cursus
+              </button>
               {addOpen ? (
                 <div className="add-menu" role="menu">
                   <button type="button" className="add-menu-item" role="menuitem" onClick={handleCreateModule}>
@@ -188,60 +252,24 @@ export function LessonsOverview({ context }: { context: SessionContext }) {
             </div>
           ) : null}
         </div>
-      </div>
+      </header>
 
-      {/* Cursus-kaarten (modules) */}
       {visibleModules.length ? (
-        <div className="course-grid">
-          {visibleModules.map((mod) => {
-            const count = lessons.filter((l) => l.moduleId === mod.id).length;
-            const status = moduleStatus(mod.id, lessons);
-            return (
-              <article className="course-card" key={mod.id}>
-                <Link href={`/app/materials/modules/${mod.id}`} className="course-card-cover" aria-label={mod.title}>
-                  {mod.coverUrl ? (
-                    <img src={mod.coverUrl} alt="" />
-                  ) : (
-                    <span className="course-card-cover-fallback" aria-hidden>
-                      <Layers size={30} />
-                    </span>
-                  )}
-                  {canEdit ? (
-                    <button
-                      type="button"
-                      className="course-card-delete"
-                      aria-label="Module verwijderen"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        void removeModule(mod);
-                      }}
-                    >
-                      <Trash2 size={15} aria-hidden />
-                    </button>
-                  ) : null}
-                </Link>
-                <div className="course-card-body">
-                  <div className="course-card-top">
-                    <span className="course-card-tag">{mod.category || "Module"}</span>
-                    <Badge tone={status === "published" ? "success" : "warning"}>
-                      {status === "published" ? "Gepubliceerd" : "Concept"}
-                    </Badge>
-                  </div>
-                  <Link href={`/app/materials/modules/${mod.id}`} className="course-card-title">
-                    {mod.title}
-                  </Link>
-                  <div className="course-card-foot">
-                    <span className="course-card-meta">
-                      <BookOpen size={15} aria-hidden /> {count} {count === 1 ? "les" : "lessen"}
-                    </span>
-                    <Link href={`/app/materials/modules/${mod.id}`} className="course-card-link">
-                      Openen <ChevronRight size={15} aria-hidden />
-                    </Link>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
+        <FeaturedCourseCarousel modules={visibleModules} lessons={lessons} />
+      ) : null}
+
+      {visibleModules.length ? (
+        <div className={`course-grid${viewMode === "list" ? " course-grid--list" : ""}`}>
+          {visibleModules.map((mod) => (
+            <MaterialsCourseCard
+              key={mod.id}
+              mod={mod}
+              lessons={lessons}
+              view={viewMode}
+              canEdit={canEdit}
+              onDelete={(item) => void removeModule(item)}
+            />
+          ))}
         </div>
       ) : (
         <Card>
@@ -250,7 +278,7 @@ export function LessonsOverview({ context }: { context: SessionContext }) {
               <Layers size={26} />
             </span>
             <h3>Nog geen modules</h3>
-            <p className="muted">Bundel lessen tot een cursus. Maak je eerste module via &quot;Add content&quot;.</p>
+            <p className="muted">Bundel lessen tot een cursus. Maak je eerste module via &quot;Nieuwe cursus&quot;.</p>
             {canEdit ? (
               <Button type="button" onClick={handleCreateModule}>
                 <Plus size={16} aria-hidden /> Nieuwe module
@@ -295,7 +323,7 @@ export function LessonsOverview({ context }: { context: SessionContext }) {
                   </Select>
                 ) : null}
                 <div className="lesson-row-actions">
-                  <Link href={`/app/materials/lessons/${lesson.id}/preview`} className="icon-btn" aria-label="Voorbeeld" title="Als leerling bekijken">
+                  <Link href={`/app/materials/lessons/${lesson.id}/preview`} className="icon-btn" aria-label="Voorbeeldweergave" title="Voorbeeldweergave">
                     <Eye size={15} aria-hidden />
                   </Link>
                   <Link href={`/app/materials/lessons/${lesson.id}`} className="icon-btn" aria-label="Bewerken" title="Bewerken">

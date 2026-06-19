@@ -172,7 +172,7 @@ export function LessonEditor({
               <Pencil size={15} aria-hidden /> Bewerken
             </button>
             <button type="button" className={`segmented-btn ${mode === "preview" ? "is-active" : ""}`} onClick={() => setMode("preview")}>
-              <Eye size={15} aria-hidden /> Als leerling
+              <Eye size={15} aria-hidden /> Voorbeeld
             </button>
           </div>
           <button type="button" className="icon-btn" aria-label="Versiegeschiedenis" title="Versiegeschiedenis" onClick={() => setHistoryOpen((v) => !v)}>

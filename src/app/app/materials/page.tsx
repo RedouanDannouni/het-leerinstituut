@@ -24,14 +24,7 @@ export default function MaterialsPage() {
   if (!context) return null;
 
   return (
-    <div className="page">
-      <header className="page-header">
-        <div>
-          <p className="eyebrow">Lessen / lesmateriaal</p>
-          <h1>Lesmateriaal &amp; leerpaden</h1>
-          <p className="muted">Bouw blok-gebaseerde lessen, bundel ze tot modules en leerpaden en wijs ze toe aan deelnemers.</p>
-        </div>
-      </header>
+    <div className="page materials-page">
       {flash ? (
         <div className="flash-banner" role="status" aria-live="polite">
           <CheckCircle2 size={18} aria-hidden />

@@ -247,7 +247,7 @@ export function PathWizard({ pathId, context }: { pathId: string; context: Sessi
         </div>
         <div className="cluster">
           <Link href={`/app/materials/paths/${pathId}/preview`} className="btn btn-ghost btn-sm">
-            <Eye size={15} aria-hidden /> Als leerling
+            <Eye size={15} aria-hidden /> Voorbeeldweergave
           </Link>
           {published ? (
             <Button type="button" variant="secondary" onClick={unpublish}>Terug naar concept</Button>

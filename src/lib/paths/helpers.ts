@@ -29,7 +29,7 @@ export function formatDuration(path: LearningPath): string | null {
 }
 
 /**
- * Lineaire lijst van les-id's zoals een leerling ze doorloopt: items op volgorde,
+ * Lineaire lijst van les-id's zoals een docent ze doorloopt: items op volgorde,
  * modules uitgeklapt naar hun (eveneens geordende) lessen. Basis voor gating en
  * voortgangsberekening.
  */

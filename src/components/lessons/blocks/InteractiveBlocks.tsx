@@ -268,7 +268,7 @@ export function SortEditor({ block, onChange }: BlockEditorProps<SortBlock>) {
   return (
     <div className="stack-sm">
       <Input value={block.prompt} onChange={(event) => onChange({ ...block, prompt: event.target.value })} placeholder="Opdracht" />
-      <p className="help-text">De volgorde hieronder is de juiste volgorde. Leerlingen krijgen ze door elkaar.</p>
+      <p className="help-text">De volgorde hieronder is de juiste volgorde. Docenten krijgen ze door elkaar.</p>
       {block.items.map((item, index) => (
         <div className="block-inline-controls" key={item.id}>
           <span className="sort-index">{index + 1}</span>
