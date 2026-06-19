@@ -5,6 +5,12 @@ export type Permission =
   | "view:projects"
   | "view:materials"
   | "edit:materials"
+  | "edit:lessons"
+  | "publish:lessons"
+  | "view:paths"
+  | "edit:paths"
+  | "publish:paths"
+  | "assign:paths"
   | "view:observations"
   | "edit:observations"
   | "approve:summary"
@@ -21,6 +27,12 @@ const matrix: Record<Role, Permission[]> = {
     "view:projects",
     "view:materials",
     "edit:materials",
+    "edit:lessons",
+    "publish:lessons",
+    "view:paths",
+    "edit:paths",
+    "publish:paths",
+    "assign:paths",
     "view:observations",
     "edit:observations",
     "approve:summary",
@@ -29,12 +41,39 @@ const matrix: Record<Role, Permission[]> = {
     "export:reports",
     "view:settings",
   ],
-  school_leider: ["view:cockpit", "view:projects", "view:materials", "view:reports", "export:reports", "view:settings"],
-  docent: ["view:cockpit", "view:projects", "view:materials", "edit:materials", "view:settings"],
+  school_leider: [
+    "view:cockpit",
+    "view:projects",
+    "view:materials",
+    "view:paths",
+    "assign:paths",
+    "view:reports",
+    "export:reports",
+    "view:settings",
+  ],
+  docent: [
+    "view:cockpit",
+    "view:projects",
+    "view:materials",
+    "edit:materials",
+    "edit:lessons",
+    "publish:lessons",
+    "view:paths",
+    "edit:paths",
+    "publish:paths",
+    "assign:paths",
+    "view:settings",
+  ],
   admin: [
     "view:cockpit",
     "view:projects",
     "view:materials",
+    "edit:lessons",
+    "publish:lessons",
+    "view:paths",
+    "edit:paths",
+    "publish:paths",
+    "assign:paths",
     "view:observations",
     "view:reports",
     "edit:reports",
