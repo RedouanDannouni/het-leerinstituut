@@ -68,6 +68,57 @@ export type Database = {
           },
         ]
       }
+      form_windows: {
+        Row: {
+          closed_at: string | null
+          created_at: string
+          form_key: string
+          id: string
+          opened_at: string | null
+          opened_by: string | null
+          status: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          closed_at?: string | null
+          created_at?: string
+          form_key: string
+          id?: string
+          opened_at?: string | null
+          opened_by?: string | null
+          status?: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          closed_at?: string | null
+          created_at?: string
+          form_key?: string
+          id?: string
+          opened_at?: string | null
+          opened_by?: string | null
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_windows_opened_by_fkey"
+            columns: ["opened_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "form_windows_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invitations: {
         Row: {
           accepted_at: string | null

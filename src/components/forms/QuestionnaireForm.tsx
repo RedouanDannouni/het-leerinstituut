@@ -5,7 +5,7 @@ import { CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { AutoTextarea, FloatingInput, ScaleMeter, SegmentedField } from "@/components/ui/FormControls";
+import { AutoTextarea, FloatingInput, RadioField, ScaleMeter } from "@/components/ui/FormControls";
 import { BouwsteenIcon, isBouwsteenCode, type BouwsteenCode } from "@/components/forms/BouwsteenIcon";
 import { SCALES } from "@/lib/forms/definitions";
 import { submitKwaliteitsmonitorForm } from "@/lib/forms/actions";
@@ -302,14 +302,15 @@ function MetaInputField({ field, value, onChange }: { field: MetaField; value: s
   }
   if (field.input === "select") {
     return (
-      <SegmentedField
+      <RadioField
         label={field.label}
         name={field.column}
         options={field.options ?? []}
         value={value}
         onChange={onChange}
         help={field.help}
-        clearable={!field.required}
+        clearable={!field.required && !field.locked}
+        locked={field.locked}
       />
     );
   }

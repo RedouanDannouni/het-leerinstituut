@@ -1,10 +1,12 @@
-import type {
-  FormDefinition,
-  MetaField,
-  RatingGroup,
-  RatingItem,
-  ScaleOption,
-  ScaleVariant,
+import {
+  VARIANT_ORDER,
+  type FormDefinition,
+  type FormInstrument,
+  type MetaField,
+  type RatingGroup,
+  type RatingItem,
+  type ScaleOption,
+  type ScaleVariant,
 } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -316,6 +318,8 @@ const PLC_SECTIONS = [
 const lesobservatieCoach: FormDefinition = {
   key: "lesobservatie-coach",
   table: "lesobservatie_coaches",
+  instrument: "lesobservatie",
+  variant: "leiding",
   title: "Lesobservatie (coach)",
   subtitle: "Externe observatie van een les door een coach/observant.",
   intro:
@@ -334,7 +338,7 @@ const lesobservatieCoach: FormDefinition = {
       options: ["Nulmeting", "Volgmeting", "Eindmeting"],
       required: true,
     },
-    { column: "schoolnaam", label: "Schoolnaam", input: "text", required: true, autofill: "schoolnaam" },
+    { column: "schoolnaam", label: "Schoolnaam", input: "text", required: true, autofill: "schoolnaam", locked: true },
     { column: "datum_observatie", label: "Datum observatie", input: "date", required: true, autofill: "datum-vandaag" },
     { column: "tijdstip_observatie", label: "Tijdstip observatie", input: "time", autofill: "tijd-nu" },
     { column: "naam_leraar", label: "Naam leraar", input: "text", required: true },
@@ -353,6 +357,8 @@ const lesobservatieCoach: FormDefinition = {
 const zelfevaluatie: FormDefinition = {
   key: "zelfevaluatie",
   table: "zelfevaluatie",
+  instrument: "lesobservatie",
+  variant: "deelnemer",
   title: "Zelfevaluatie (leraar)",
   subtitle: "Reflectie van de leraar op het eigen lesgedrag.",
   intro: "Spiegelformulier van de leerlingfeedback: dezelfde 28 vragen over 6 bouwstenen, geformuleerd vanuit 'Ik...'.",
@@ -362,7 +368,7 @@ const zelfevaluatie: FormDefinition = {
   scale: "leskwaliteit",
   meta: [
     { column: "datum_zelfevaluatie", label: "Datum zelfevaluatie", input: "date", required: true, autofill: "datum-vandaag" },
-    { column: "schoolnaam", label: "Schoolnaam", input: "text", autofill: "schoolnaam" },
+    { column: "schoolnaam", label: "Schoolnaam", input: "text", autofill: "schoolnaam", locked: true },
     { column: "gender", label: "Gender", input: "select", options: GENDER_OPTIONS },
     { column: "leeftijd", label: "Leeftijd", input: "number" },
     { column: "hoogst_genoten_opleiding", label: "Hoogst genoten opleiding", input: "text" },
@@ -374,6 +380,8 @@ const zelfevaluatie: FormDefinition = {
 const leerlingfeedback: FormDefinition = {
   key: "leerlingfeedback",
   table: "leerlingfeedback",
+  instrument: "lesobservatie",
+  variant: "leerling",
   title: "Leerlingfeedback",
   subtitle: "Leerlingen geven feedback op het gedrag van hun leraar.",
   intro: "Spiegelformulier van de zelfevaluatie: 28 vragen over 6 bouwstenen, geformuleerd vanuit 'Onze leraar...'.",
@@ -393,6 +401,8 @@ const leerlingfeedback: FormDefinition = {
 const plcSchoolleiding: FormDefinition = {
   key: "plc-schoolleiding",
   table: "plc_schoolleiding",
+  instrument: "plc",
+  variant: "leiding",
   title: "PLC-scan (schoolleiding)",
   subtitle: "Zelfreflectie van de schoolleider op leiderschap en schoolcultuur.",
   intro: "44 vragen in 3 secties: schoolleiderschap (Ik...), leerlinggedrag en PLC-cultuur.",
@@ -401,7 +411,7 @@ const plcSchoolleiding: FormDefinition = {
   allowedRoles: ["school_leider", "admin", "planner"],
   scale: "plc",
   meta: [
-    { column: "schoolnaam", label: "Schoolnaam", input: "text", required: true, autofill: "schoolnaam" },
+    { column: "schoolnaam", label: "Schoolnaam", input: "text", required: true, autofill: "schoolnaam", locked: true },
     { column: "geslacht", label: "Wat is uw geslacht?", input: "select", options: GENDER_OPTIONS },
     { column: "leeftijd", label: "Wat is uw leeftijd?", input: "number" },
     { column: "opleiding", label: "Wat is de hoogste opleiding die u heeft voltooid?", input: "text" },
@@ -414,6 +424,8 @@ const plcSchoolleiding: FormDefinition = {
 const plcDocenten: FormDefinition = {
   key: "plc-docenten",
   table: "plc_docenten",
+  instrument: "plc",
+  variant: "deelnemer",
   title: "PLC-scan (docenten)",
   subtitle: "360°-beoordeling van de schoolleiding door docenten + PLC-cultuur.",
   intro: "44 vragen: Q1-18 over de schoolleiding ('De schoolleiding...'), Q19-44 over leerlinggedrag en PLC-cultuur.",
@@ -422,7 +434,7 @@ const plcDocenten: FormDefinition = {
   allowedRoles: ["docent", "coach", "admin", "planner"],
   scale: "plc",
   meta: [
-    { column: "schoolnaam", label: "Schoolnaam", input: "text", required: true, autofill: "schoolnaam" },
+    { column: "schoolnaam", label: "Schoolnaam", input: "text", required: true, autofill: "schoolnaam", locked: true },
     { column: "geslacht", label: "Wat is uw geslacht?", input: "select", options: GENDER_OPTIONS },
     { column: "leeftijd", label: "Wat is uw leeftijd?", input: "number" },
     { column: "opleiding", label: "Wat is de hoogste opleiding die u heeft voltooid?", input: "text" },
@@ -435,6 +447,8 @@ const plcDocenten: FormDefinition = {
 const plcLeerlingen: FormDefinition = {
   key: "plc-leerlingen",
   table: "plc_leerlingen",
+  instrument: "plc",
+  variant: "leerling",
   title: "PLC-scan (leerlingen)",
   subtitle: "Leerlingen beoordelen hun eigen gedrag zoals zij denken dat hun leraren dat zien.",
   intro: "11 korte vragen in 3 categorieën. Alle vragen beginnen met 'Mijn leraren vinden dat ik...'.",
@@ -471,4 +485,11 @@ export const FORM_DEFINITIONS: FormDefinition[] = [
 
 export function getFormDefinition(key: string): FormDefinition | undefined {
   return FORM_DEFINITIONS.find((def) => def.key === key);
+}
+
+/** Formulieren van één instrument, gesorteerd op vaste variant-volgorde (leiding → deelnemer → leerling). */
+export function formsForInstrument(instrument: FormInstrument): FormDefinition[] {
+  return VARIANT_ORDER.flatMap((variant) =>
+    FORM_DEFINITIONS.filter((def) => def.instrument === instrument && def.variant === variant),
+  );
 }

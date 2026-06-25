@@ -18,6 +18,14 @@ export default async function AnonFeedbackPage({
   const { data: tenantRow } = await service.from("tenants").select("name").eq("id", tenant).single();
   if (!tenantRow) notFound();
 
+  const { data: windowRow } = await service
+    .from("form_windows")
+    .select("status")
+    .eq("tenant_id", tenant)
+    .eq("form_key", formKey)
+    .maybeSingle();
+  const isOpen = windowRow?.status === "open";
+
   return (
     <main id="main" className="public-form-screen">
       <div className="public-form-shell">
@@ -28,7 +36,17 @@ export default async function AnonFeedbackPage({
             <p className="muted">{def.intro}</p>
           </div>
         </header>
-        <QuestionnaireForm def={def} tenantId={tenant} autofill={{ schoolnaam: tenantRow.name }} />
+        {isOpen ? (
+          <QuestionnaireForm def={def} tenantId={tenant} autofill={{ schoolnaam: tenantRow.name }} />
+        ) : (
+          <div className="surface" style={{ padding: "var(--space-4)" }}>
+            <h2>Deze vragenlijst is gesloten.</h2>
+            <p className="muted">
+              De vragenlijst is op dit moment niet beschikbaar. Neem contact op met je school als je denkt dat dit
+              een vergissing is.
+            </p>
+          </div>
+        )}
       </div>
     </main>
   );

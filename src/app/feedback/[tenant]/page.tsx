@@ -13,7 +13,14 @@ export default async function FeedbackLandingPage({ params }: { params: Promise<
   const { data: tenantRow } = await service.from("tenants").select("name").eq("id", tenant).single();
   if (!tenantRow) notFound();
 
-  const anonForms = FORM_DEFINITIONS.filter((def) => def.access === "anon");
+  const { data: openWindows } = await service
+    .from("form_windows")
+    .select("form_key")
+    .eq("tenant_id", tenant)
+    .eq("status", "open");
+  const openKeys = new Set((openWindows ?? []).map((row) => row.form_key));
+
+  const anonForms = FORM_DEFINITIONS.filter((def) => def.access === "anon" && openKeys.has(def.key));
 
   return (
     <main id="main" className="public-form-screen">
@@ -26,6 +33,13 @@ export default async function FeedbackLandingPage({ params }: { params: Promise<
           </div>
         </header>
         <div className="stack">
+          {anonForms.length === 0 ? (
+            <Card>
+              <p className="muted" style={{ margin: 0 }}>
+                Er staan op dit moment geen vragenlijsten open voor deze school.
+              </p>
+            </Card>
+          ) : null}
           {anonForms.map((def) => (
             <Card key={def.key}>
               <div className="card-header">

@@ -527,3 +527,94 @@ Elke fase: migratie → `database.types.ts` regenereren → domeinlaag → UI �
 - **OT5 — Demo seed-data vs Supabase:** wanneer schakelen we de seed-/localStorage-terugval uit
   ten gunste van uitsluitend Supabase? *Voorstel: na Fase 1 voor de echte rollen, demo behouden
   voor showcases.*
+
+---
+
+## 14. Kwaliteitsmonitor-vragenlijsten — uitzetten per school (update na DAN-briefing)
+
+> Deze sectie actualiseert §4.3 (`public_forms`), §7 en besluit **B6** op basis van de
+> DAN Analytics-briefing (v3) en de productwens "Het Leerinstituut zet formulieren uit
+> naar scholen en kan ze openen en sluiten". De rest van het document blijft leidend.
+
+### 14.1 Twee instrumenten, drie respondent-varianten
+
+De Kwaliteitsmonitor bestaat uit **2 instrumenten**, elk met **3 respondent-varianten**.
+In de UI worden de zes formulieren onder deze twee instrumenten gegroepeerd:
+
+| Instrument | Coach / Leiding | Deelnemer (docent) | Leerling |
+| --- | --- | --- | --- |
+| **Lesobservatie** | `lesobservatie_coaches` | `zelfevaluatie` | `leerlingfeedback` |
+| **PLC-scan** | `plc_schoolleiding` | `plc_docenten` | `plc_leerlingen` |
+
+Dit komt overeen met `assessment_instruments.variant` uit §4.3, uitgebreid met het
+**PLC-scan-instrument** (stond nog niet in v2). Instrument + variant zijn in de huidige
+implementatie metadata op de `FormDefinition` (`src/lib/forms/`), niet (nog) genormaliseerde
+tabellen.
+
+> **Divergentie t.o.v. §4.2/§4.3 (bewuste keuze).** De huidige implementatie gebruikt **6 brede,
+> gedenormaliseerde tabellen** (één kolom per vraag, bv. `b1_q1`, `sl_q1`, `dd_q1`, `q1` + per
+> bouwsteen `b#_analyse`), conform de DAN-briefing en de oude Google Forms/PowerBI-export. Dit
+> wijkt af van het genormaliseerde `assessments`/`instrument_questions`/`assessment_responses`-model
+> uit §4.3. **Voor nu houden we de brede tabellen aan** (1-op-1 met de briefing en eenvoudige
+> export). Het genormaliseerde model blijft een toekomstoptie wanneer 360°-aggregatie over
+> instrumenten heen nodig is; mapping gebeurt dan via een view of ETL. Zie OT2.
+
+### 14.2 `form_windows` — openen/sluiten per school (generalisatie van B6)
+
+**B6 verbreed.** In v2 konden alleen **anonieme** `public_forms` worden opengezet/gesloten.
+De wens is dat het Leerinstituut **alle zes** formulieren (ook de ingelogde) per school kan
+**openen en sluiten**. We introduceren daarom één generieke tabel:
+
+**`form_windows`** — venster ("uitzetting") van één formulier voor één school.
+`id uuid pk, tenant_id text not null → tenants, form_key text not null, status text not null
+default 'gesloten' check (status in ('open','gesloten')), opened_by uuid → profiles,
+opened_at timestamptz, closed_at timestamptz, updated_at, created_at,
+unique(tenant_id, form_key)`.
+
+- **Handmatig** open/sluiten (besluit gebruiker, juni 2026): geen automatische datumvensters in
+  MVP. `opens_at`/`closes_at` kunnen later worden toegevoegd voor geplande vensters.
+- **Granulariteit:** los **per formulier per school** (geen gebundelde meetmoment-rondes in MVP).
+  Een `meetmoment`-label kan later worden toegevoegd om een set vensters in één keer te openen.
+- **Afdwinging:** een inzending (ingelogd én anoniem) wordt **geweigerd** als er geen `open`
+  venster bestaat voor `(tenant_id, form_key)`. Dit wordt server-side gecontroleerd in de
+  submit-action en de anonieme route, niet alleen in de UI.
+
+**RLS `form_windows`:**
+```sql
+alter table public.form_windows enable row level security;
+
+-- Lezen: instituutsstaf ziet alles; schoolgebruikers alleen hun eigen tenant.
+create policy "read form_windows" on public.form_windows for select to authenticated
+  using ( is_institute_staff() or tenant_id = current_tenant_id() );
+
+-- Beheren (open/sluiten): alleen instituutsstaf (admin/planner/coach).
+create policy "manage form_windows" on public.form_windows for all to authenticated
+  using ( is_institute_staff() ) with check ( is_institute_staff() );
+```
+
+> **Bijwerking 6 formuliertabellen.** De SELECT-policies (`read tenant *`) lazen alleen
+> `tenant_id = current_tenant_id()` of rol ∈ {admin, planner}. Ze worden verbreed naar
+> `is_institute_staff() or tenant_id = current_tenant_id()`, zodat een **coach** die voor een
+> school invult de zojuist ingevoegde rij ook kan teruglezen (PostgREST `insert ... select`).
+> Dit is een tijdelijke verbreding zolang `tenant_memberships` (§3.2) nog niet is gebouwd:
+> instituutsstaf ziet voorlopig formulierdata van álle scholen. Aanscherpen via memberships is
+> een vervolgstap.
+
+### 14.3 Navigatie: "kies eerst een school"
+
+- **Instituutsstaf** (admin/planner/coach) ziet op `/app/forms` eerst een **schoolkiezer** en
+  komt daarna op `/app/forms/school/[tenantId]`, met per formulier een **open/sluit-toggle**,
+  een **invullen**-knop (voor de eigen rol) en een **deellink** (leerlingen).
+- **Schoolgebruikers** (school_leider/docent) worden direct naar hun eigen
+  `/app/forms/school/[tenantId]` geleid en zien **alleen de opengezette** formulieren.
+- **Leerlingen** vullen anoniem in via `/feedback/[tenant]/[formKey]`; die route toont een
+  "gesloten"-melding zolang er geen open venster is.
+
+Routes (aanvulling op §9):
+
+| Route | Type | Doel |
+| --- | --- | --- |
+| `/app/forms` | RSC/CSR | Schoolkiezer (instituut) of redirect naar eigen school |
+| `/app/forms/school/[tenantId]` | CSR | Overzicht 2 instrumenten × 3 varianten + open/sluit |
+| `/app/forms/school/[tenantId]/[formKey]` | CSR | Ingelogd formulier invullen (tenant-bewust) |
+| `/app/forms/school/[tenantId]/resultaten` | CSR | Resultaten gefilterd op de gekozen school |

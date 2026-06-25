@@ -4,7 +4,7 @@ import { useEffect, useId, useRef, type InputHTMLAttributes, type ReactNode, typ
 
 /**
  * Brand-afgestemde formuliercontrols voor de Kwaliteitsmonitor.
- * Patronen (floating labels, segmented selectors, score-meter) zijn geïnspireerd
+ * Patronen (floating labels, verticale radioknoppen, score-meter) zijn geïnspireerd
  * op moderne controls, maar gebonden aan de bestaande design tokens zodat
  * light/dark en de huisstijl automatisch kloppen.
  */
@@ -20,21 +20,21 @@ interface FloatingInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>,
   locked?: boolean;
 }
 
-export function FloatingInput({ label, help, locked, id, className = "", value, ...props }: FloatingInputProps) {
+export function FloatingInput({ label, help, locked, id, className = "", value, onChange, readOnly, ...props }: FloatingInputProps) {
   const reactId = useId();
   const inputId = id ?? reactId;
-  // date/time/number tonen altijd een waarde-UI; dwing het label dan omhoog.
-  const alwaysFloat = props.type === "date" || props.type === "time" || props.type === "number";
+  const isReadOnly = locked || readOnly;
   return (
-    <div className={`fl-field ${locked ? "fl-field--locked" : ""} ${alwaysFloat ? "fl-field--float" : ""} ${className}`.trim()}>
+    <div className={`fl-field fl-field--float ${locked ? "fl-field--locked" : ""} ${className}`.trim()}>
       <input
         id={inputId}
         className="fl-field__input"
         placeholder=" "
         value={value}
-        readOnly={locked || props.readOnly}
-        aria-readonly={locked || undefined}
         {...props}
+        readOnly={isReadOnly}
+        aria-readonly={isReadOnly || undefined}
+        onChange={isReadOnly ? undefined : onChange}
       />
       <label htmlFor={inputId} className="fl-field__label">
         {label}
@@ -45,10 +45,10 @@ export function FloatingInput({ label, help, locked, id, className = "", value, 
 }
 
 // ---------------------------------------------------------------------------
-// Segmented selector (vervangt een dropdown bij weinig opties)
+// Verticale radioknoppen (keuzevelden met weinig opties)
 // ---------------------------------------------------------------------------
 
-interface SegmentedFieldProps {
+interface RadioFieldProps {
   label: string;
   name: string;
   options: string[];
@@ -57,30 +57,36 @@ interface SegmentedFieldProps {
   help?: string;
   /** Optioneel: laat de gekozen optie weer leegklikken. */
   clearable?: boolean;
+  /** Alleen-lezen tonen (geen wijziging mogelijk). */
+  locked?: boolean;
 }
 
-export function SegmentedField({ label, name, options, value, onChange, help, clearable = true }: SegmentedFieldProps) {
+export function RadioField({ label, name, options, value, onChange, help, clearable = true, locked = false }: RadioFieldProps) {
+  const groupId = useId();
   return (
-    <fieldset className="seg-field">
-      <legend className="seg-field__label">{label}</legend>
-      <div className="seg" role="radiogroup" aria-label={label}>
-        {options.map((option) => {
+    <fieldset className={`radio-field ${locked ? "radio-field--locked" : ""}`.trim()}>
+      <legend className="radio-field__label">{label}</legend>
+      <div className="radio-list" role="radiogroup" aria-label={label} aria-readonly={locked || undefined}>
+        {options.map((option, index) => {
           const checked = value === option;
+          const inputId = `${groupId}-${index}`;
           return (
-            <label key={option} className={`seg__option ${checked ? "seg__option--active" : ""}`.trim()}>
+            <label key={option} className="radio" htmlFor={inputId}>
               <input
-                className="seg__input"
+                id={inputId}
+                className="radio__input"
                 type="radio"
                 name={name}
                 value={option}
                 checked={checked}
+                disabled={locked}
                 onChange={() => onChange(option)}
                 onClick={() => {
-                  if (clearable && checked) onChange("");
+                  if (!locked && clearable && checked) onChange("");
                 }}
               />
-              <span className="seg__dot" aria-hidden />
-              <span className="seg__text">{option}</span>
+              <span className="radio__dot" aria-hidden="true" />
+              <span className="radio__text">{option}</span>
             </label>
           );
         })}
@@ -111,38 +117,39 @@ interface ScaleMeterProps {
 export function ScaleMeter({ name, options, value, onChange, ariaLabel }: ScaleMeterProps) {
   const selected = options.find((option) => option.value === value) ?? null;
   return (
-    <div className={`meter meter--${options.length}`}>
-      <div className="meter__track" role="radiogroup" aria-label={ariaLabel}>
+    <div className="segscale">
+      <div className="segscale__track" role="radiogroup" aria-label={ariaLabel}>
         {options.map((option) => {
           const checked = value === option.value;
-          const filled = value != null && option.value <= value;
           return (
             <label
               key={option.value}
-              className={`meter__seg meter__seg--${option.value} ${filled ? "is-filled" : ""} ${checked ? "is-active" : ""}`.trim()}
+              className={`segscale__seg ${checked ? "is-active" : ""}`.trim()}
               title={option.description ?? option.label}
             >
               <input
-                className="meter__input"
+                className="segscale__input"
                 type="radio"
                 name={name}
                 value={option.value}
                 checked={checked}
                 onChange={() => onChange(option.value)}
               />
-              <span className="meter__num">{option.value}</span>
+              <span className="segscale__num">{option.value}</span>
             </label>
           );
         })}
       </div>
-      <div className="meter__caption" aria-live="polite">
+      <div className="segscale__caption" aria-live="polite">
         {selected ? (
           <>
-            <strong className="meter__caption-label">{selected.label}</strong>
-            {selected.description ? <span className="meter__caption-desc"> — {selected.description}</span> : null}
+            <strong className="segscale__caption-label">{selected.label}</strong>
+            {selected.description ? (
+              <span className="segscale__caption-desc"> — {selected.description}</span>
+            ) : null}
           </>
         ) : (
-          <span className="meter__caption-empty">Kies een score</span>
+          <span className="segscale__caption-empty">Kies een score</span>
         )}
       </div>
     </div>

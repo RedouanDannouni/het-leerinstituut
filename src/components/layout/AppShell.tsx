@@ -5,8 +5,9 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ChevronLeft, Menu } from "lucide-react";
 import { useRequireSession } from "@/lib/auth/session";
-import { AccountMenu } from "@/components/layout/AccountMenu";
 import { AppHeaderToolbar } from "@/components/layout/AppHeaderToolbar";
+import { CockpitScopeProvider } from "@/components/cockpits/cockpit-scope";
+import { SidebarDemoSwitcher } from "@/components/layout/SidebarDemoSwitcher";
 import { appNavGroups } from "@/components/layout/app-nav";
 import { can } from "@/lib/domain/permissions";
 import { brandAssets } from "@/lib/brand";
@@ -42,13 +43,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   const role = context.user.role;
+  const isCockpitHome = pathname === "/app/cockpit";
 
   return (
-    <div
-      className="app-shell"
-      data-collapsed={collapsed ? "true" : "false"}
-      data-mobile-open={mobileOpen ? "true" : "false"}
-    >
+    <CockpitScopeProvider>
+      <div
+        className="app-shell"
+        data-collapsed={collapsed ? "true" : "false"}
+        data-mobile-open={mobileOpen ? "true" : "false"}
+      >
       {mobileOpen ? (
         <button
           type="button"
@@ -106,19 +109,28 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
+
+        <div className="sidebar-foot">
+          <SidebarDemoSwitcher
+            collapsed={collapsed}
+            context={context}
+            onSwitchUser={switchUser}
+          />
+        </div>
       </aside>
 
-      <div className="main">
-        <header className="app-header no-print">
-          <div className="app-header-inner">
-            <AppHeaderToolbar
-              context={context}
-              onLogout={logout}
-              onSwitchUser={switchUser}
-              canViewSettings={can(role, "view:settings")}
-            />
-          </div>
-        </header>
+      <div className="main" data-cockpit-layout={isCockpitHome ? "true" : undefined}>
+        {!isCockpitHome ? (
+          <header className="app-header no-print">
+            <div className="app-header-inner">
+              <AppHeaderToolbar
+                context={context}
+                onLogout={logout}
+                canViewSettings={can(role, "view:settings")}
+              />
+            </div>
+          </header>
+        ) : null}
         <div className="mobile-bar no-print">
           <div className="mobile-bar-start">
             <button
@@ -136,12 +148,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <AppHeaderToolbar
             context={context}
             onLogout={logout}
-            onSwitchUser={switchUser}
             canViewSettings={can(role, "view:settings")}
           />
         </div>
         <main id="main">{children}</main>
+        </div>
       </div>
-    </div>
+    </CockpitScopeProvider>
   );
 }

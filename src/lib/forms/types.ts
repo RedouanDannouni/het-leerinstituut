@@ -61,6 +61,12 @@ export interface FormSection {
 
 export type FormAccess = "auth" | "anon";
 
+/** De twee instrumenten van de Kwaliteitsmonitor. */
+export type FormInstrument = "lesobservatie" | "plc";
+
+/** Respondent-variant binnen een instrument. */
+export type FormVariant = "leiding" | "deelnemer" | "leerling";
+
 export type FormTable =
   | "lesobservatie_coaches"
   | "zelfevaluatie"
@@ -73,6 +79,10 @@ export interface FormDefinition {
   /** Route-slug, bijv. "lesobservatie-coach". */
   key: string;
   table: FormTable;
+  /** Bovenliggend instrument waar dit formulier onder valt. */
+  instrument: FormInstrument;
+  /** Respondent-variant binnen het instrument. */
+  variant: FormVariant;
   title: string;
   subtitle: string;
   intro: string;
@@ -88,6 +98,30 @@ export interface FormDefinition {
   /** Een open tekstveld los van de bouwstenen (coach: empirische observatie). */
   generalNote?: MetaField;
 }
+
+export interface InstrumentMeta {
+  key: FormInstrument;
+  label: string;
+  description: string;
+}
+
+export const INSTRUMENTS: InstrumentMeta[] = [
+  {
+    key: "lesobservatie",
+    label: "Lesobservaties",
+    description:
+      "De kwaliteit van het lesgeven, vanuit drie perspectieven: de coach observeert, de leraar reflecteert en de leerlingen geven feedback.",
+  },
+  {
+    key: "plc",
+    label: "PLC-scan",
+    description:
+      "De professionele leergemeenschap en het schoolleiderschap, vanuit drie perspectieven: schoolleiding, docenten en leerlingen.",
+  },
+];
+
+/** De drie respondent-varianten in vaste volgorde voor weergave per instrument. */
+export const VARIANT_ORDER: FormVariant[] = ["leiding", "deelnemer", "leerling"];
 
 export function allRatingColumns(def: FormDefinition): string[] {
   return def.groups.flatMap((group) => group.items.map((item) => item.column));

@@ -12,8 +12,8 @@ export const roleIntents: Record<Role, string> = {
   coach: "Snel zien welke observaties vandaag aandacht vragen.",
   school_leider: "Voortgang en gespreksonderwerpen sturen zonder ruwe observatiedata.",
   docent: "Eigen materiaal, feedback en afspraken ontwikkelgericht volgen.",
-  admin: "Omgevingen, gebruikers, templates en audit betrouwbaar beheren.",
-  planner: "Trajecten en inzet over alle scholen overzien en plannen.",
+  admin: "Stuur en bewaak de trajecten over alle scholen heen.",
+  planner: "Stuur je trajecten — zie waar het schuurt en waar je heen moet.",
 };
 
 /**

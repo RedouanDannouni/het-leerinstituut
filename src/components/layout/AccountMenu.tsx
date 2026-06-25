@@ -25,7 +25,6 @@ import {
 import { GrowthDonut } from "@/components/blocks/GrowthDonut";
 import { roleLabels } from "@/lib/domain/roles";
 import { getProfileSummary, type ProfileIcon } from "@/lib/domain/selectors";
-import { users } from "@/lib/domain/seed-data";
 import { useTheme } from "@/lib/theme/useTheme";
 import type { SessionContext } from "@/lib/domain/types";
 
@@ -59,11 +58,10 @@ function initialsOf(name: string): string {
 type AccountMenuProps = {
   context: SessionContext;
   onLogout: () => void;
-  onSwitchUser: (userId: string) => void;
   canViewSettings: boolean;
 };
 
-export function AccountMenu({ context, onLogout, onSwitchUser, canViewSettings }: AccountMenuProps) {
+export function AccountMenu({ context, onLogout, canViewSettings }: AccountMenuProps) {
   const { isDark, toggleTheme } = useTheme();
   const menuId = useId();
   const [open, setOpen] = useState(false);
@@ -101,11 +99,6 @@ export function AccountMenu({ context, onLogout, onSwitchUser, canViewSettings }
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [open]);
-
-  function handleSwitchUser(userId: string) {
-    onSwitchUser(userId);
-    setOpen(false);
-  }
 
   function closeMenu() {
     setOpen(false);
@@ -244,37 +237,6 @@ export function AccountMenu({ context, onLogout, onSwitchUser, canViewSettings }
                   <span className="toggle-switch__knob" aria-hidden />
                 </label>
               </div>
-            </div>
-
-            <hr className="account-dropdown-divider" />
-
-            <div className="account-dropdown-section">
-              <p className="account-dropdown-section-label">Demo-gebruiker</p>
-              <ul className="account-switch-list" role="radiogroup" aria-label="Demo-gebruiker wisselen">
-                {users.map((user) => {
-                  const active = user.id === context.user.id;
-                  return (
-                    <li key={user.id}>
-                      <button
-                        type="button"
-                        role="radio"
-                        aria-checked={active}
-                        className={`account-switch-item${active ? " active" : ""}`}
-                        onClick={() => handleSwitchUser(user.id)}
-                      >
-                        <span className="avatar avatar--switch" aria-hidden>
-                          {initialsOf(user.name)}
-                        </span>
-                        <span className="account-switch-item-meta">
-                          <span className="account-switch-item-name">{user.name}</span>
-                          <span className="account-switch-item-role">{roleLabels[user.role]}</span>
-                        </span>
-                        <span className="account-switch-item-marker" aria-hidden />
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
             </div>
 
             <hr className="account-dropdown-divider" />

@@ -4,13 +4,13 @@ import { useEffect, useId, useRef, useState } from "react";
 import { Bell, CircleHelp, Sparkles } from "lucide-react";
 import { AccountMenu } from "@/components/layout/AccountMenu";
 import { HeaderSearch } from "@/components/layout/HeaderSearch";
+import { CockpitScopeFilter } from "@/components/cockpits/cockpit-scope";
 import { useSession } from "@/lib/auth/session";
 import type { SessionContext } from "@/lib/domain/types";
 
 type AppHeaderToolbarProps = {
   context: SessionContext;
   onLogout: () => void;
-  onSwitchUser: (userId: string) => void;
   canViewSettings: boolean;
 };
 
@@ -137,20 +137,19 @@ function HeaderHelp({ onShowOnboarding }: { onShowOnboarding: () => void }) {
 export function AppHeaderToolbar({
   context,
   onLogout,
-  onSwitchUser,
   canViewSettings,
 }: AppHeaderToolbarProps) {
   const session = useSession();
 
   return (
     <div className="app-header-actions">
+      <CockpitScopeFilter role={context.user.role} />
       <HeaderSearch role={context.user.role} />
       <HeaderNotifications />
       <HeaderHelp onShowOnboarding={session.completeOnboarding} />
       <AccountMenu
         context={context}
         onLogout={onLogout}
-        onSwitchUser={onSwitchUser}
         canViewSettings={canViewSettings}
       />
     </div>

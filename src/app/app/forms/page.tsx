@@ -1,231 +1,269 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import {
-  ArrowRight,
-  BarChart3,
-  Building2,
-  Check,
-  ClipboardList,
-  Clock,
-  Copy,
-  Eye,
-  GraduationCap,
-  ListChecks,
-  MessagesSquare,
-  PlayCircle,
-  Users,
-  UserCheck,
-  type LucideIcon,
-} from "lucide-react";
+import { notFound, useRouter } from "next/navigation";
+import { Building2, LayoutGrid, List, Search } from "lucide-react";
 import { useRequireSession } from "@/lib/auth/session";
 import { can } from "@/lib/domain/permissions";
-import { FORM_DEFINITIONS } from "@/lib/forms/definitions";
-import { allRatingColumns, type FormDefinition } from "@/lib/forms/types";
-import { Badge } from "@/components/ui/Badge";
+import { isInstituteStaff } from "@/lib/domain/roles";
+import { tenants } from "@/lib/domain/seed-data";
+import {
+  buildOpenCountMap,
+  openCountForTenant,
+  sumOpenCounts,
+  TOTAL_FORM_COUNT,
+} from "@/lib/forms/window-summary";
+import { listFormWindows } from "@/lib/forms/window-store";
+import { Card } from "@/components/ui/Card";
+import { Select } from "@/components/ui/Form";
+import { FormsSchoolCard } from "@/components/forms/FormsSchoolCard";
 
-const FORM_ICONS: Record<string, LucideIcon> = {
-  "lesobservatie-coach": Eye,
-  zelfevaluatie: UserCheck,
-  leerlingfeedback: MessagesSquare,
-  "plc-schoolleiding": Building2,
-  "plc-docenten": Users,
-  "plc-leerlingen": GraduationCap,
-};
+type SortKey = "title" | "status" | "open";
+type ViewMode = "grid" | "list";
+type StatusFilter = "all" | "active" | "setup";
+type FormsFilter = "all" | "has_open" | "all_closed";
 
-function questionCount(def: FormDefinition) {
-  return allRatingColumns(def).length;
-}
-
-function estMinutes(count: number) {
-  return Math.max(2, Math.round(count * 0.35));
-}
-
-function scaleLabel(def: FormDefinition) {
-  return def.scale === "plc" ? "Schaal nooit–altijd" : "Schaal ontwikkel–gevorderd";
-}
-
-type DraftProgress = { answered: number; total: number };
+const ALL_SCHOOLS = tenants.filter((tenant) => tenant.id !== "instituut");
+const SCHOOL_IDS = ALL_SCHOOLS.map((school) => school.id);
 
 export default function FormsIndexPage() {
   const { context } = useRequireSession();
-  const [origin, setOrigin] = useState("");
-  const [copied, setCopied] = useState<string | null>(null);
-  const [drafts, setDrafts] = useState<Record<string, DraftProgress>>({});
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<SortKey>("title");
+  const [region, setRegion] = useState("all");
+  const [status, setStatus] = useState<StatusFilter>("all");
+  const [formsFilter, setFormsFilter] = useState<FormsFilter>("all");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [openCounts, setOpenCounts] = useState<Record<string, number>>({});
+  const [windowsLoading, setWindowsLoading] = useState(true);
 
   const role = context?.user.role;
   const tenantId = context?.user.tenantId;
+  const institute = role ? isInstituteStaff(role) : false;
 
-  const authForms = useMemo(
-    () =>
-      role
-        ? FORM_DEFINITIONS.filter(
-            (def) => def.access === "auth" && (!def.allowedRoles || def.allowedRoles.includes(role)),
-          )
-        : [],
-    [role],
-  );
-  const anonForms = useMemo(() => FORM_DEFINITIONS.filter((def) => def.access === "anon"), []);
+  // Schoolgebruikers slaan de kiezer over: zij werken altijd binnen hun eigen school.
+  useEffect(() => {
+    if (role && !institute && tenantId) {
+      router.replace(`/app/forms/school/${tenantId}`);
+    }
+  }, [role, institute, tenantId, router]);
 
   useEffect(() => {
-    setOrigin(window.location.origin);
+    let active = true;
+    async function load() {
+      const data = await listFormWindows(SCHOOL_IDS);
+      if (!active) return;
+      setOpenCounts(buildOpenCountMap(data));
+      setWindowsLoading(false);
+    }
+    void load();
+    return () => {
+      active = false;
+    };
   }, []);
 
-  // Bestaande concepten (localStorage) detecteren zodat we "Verdergaan" kunnen tonen.
-  useEffect(() => {
-    if (authForms.length === 0) return;
-    const next: Record<string, DraftProgress> = {};
-    for (const def of authForms) {
-      try {
-        const raw = window.localStorage.getItem(`hli.form-draft.${def.key}.me`);
-        if (!raw) continue;
-        const parsed = JSON.parse(raw) as { ratings?: Record<string, number> };
-        const answered = parsed.ratings
-          ? Object.values(parsed.ratings).filter((value) => value != null).length
-          : 0;
-        if (answered > 0) next[def.key] = { answered, total: questionCount(def) };
-      } catch {
-        // corrupte draft negeren
+  const regions = useMemo(() => {
+    const set = new Set<string>();
+    ALL_SCHOOLS.forEach((school) => set.add(school.region));
+    return Array.from(set).sort((a, b) => a.localeCompare(b, "nl"));
+  }, []);
+
+  const hasActiveFilters =
+    query.trim().length > 0 ||
+    region !== "all" ||
+    status !== "all" ||
+    formsFilter !== "all";
+
+  const visibleSchools = useMemo(() => {
+    let result = ALL_SCHOOLS.filter((school) => {
+      const q = query.trim().toLowerCase();
+      const matchesQuery =
+        !q ||
+        school.name.toLowerCase().includes(q) ||
+        school.region.toLowerCase().includes(q);
+      const matchesRegion = region === "all" || school.region === region;
+      const matchesStatus = status === "all" || school.status === status;
+      const open = openCountForTenant(openCounts, school.id);
+      const matchesForms =
+        windowsLoading ||
+        formsFilter === "all" ||
+        (formsFilter === "has_open" && open > 0) ||
+        (formsFilter === "all_closed" && open === 0);
+      return matchesQuery && matchesRegion && matchesStatus && matchesForms;
+    });
+
+    result = [...result].sort((a, b) => {
+      if (sort === "open") {
+        const diff = openCountForTenant(openCounts, b.id) - openCountForTenant(openCounts, a.id);
+        return diff !== 0 ? diff : a.name.localeCompare(b.name, "nl");
       }
+      if (sort === "status") {
+        const order = { active: 0, setup: 1, paused: 2 } as const;
+        const diff = order[a.status] - order[b.status];
+        return diff !== 0 ? diff : a.name.localeCompare(b.name, "nl");
+      }
+      return a.name.localeCompare(b.name, "nl");
+    });
+
+    return result;
+  }, [query, region, status, formsFilter, sort, openCounts, windowsLoading]);
+
+  const schoolCountLabel = useMemo(() => {
+    const totalSchools = ALL_SCHOOLS.length;
+    const visibleCount = visibleSchools.length;
+    const schoolNoun = totalSchools === 1 ? "school" : "scholen";
+
+    const schoolPart =
+      visibleCount !== totalSchools || hasActiveFilters
+        ? `${visibleCount} van ${totalSchools} ${schoolNoun}`
+        : `${totalSchools} ${schoolNoun}`;
+
+    if (windowsLoading) return schoolPart;
+
+    const visibleIds = visibleSchools.map((school) => school.id);
+    const openInView = sumOpenCounts(openCounts, visibleIds);
+    const openEverywhere = sumOpenCounts(openCounts, SCHOOL_IDS);
+    const formNoun = openInView === 1 ? "formulier" : "formulieren";
+
+    if (hasActiveFilters) {
+      const maxInView = visibleCount * TOTAL_FORM_COUNT;
+      return `${schoolPart} · ${openInView} van ${maxInView} ${formNoun} open`;
     }
-    setDrafts(next);
-  }, [authForms]);
+
+    return `${schoolPart} · ${openEverywhere} ${formNoun} open`;
+  }, [visibleSchools, hasActiveFilters, windowsLoading, openCounts]);
 
   if (!context) return null;
   if (!can(context.user.role, "view:forms")) notFound();
-
-  const copyLink = async (formKey: string) => {
-    const url = `${origin}/feedback/${tenantId}/${formKey}`;
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(formKey);
-      window.setTimeout(() => setCopied(null), 2000);
-    } catch {
-      setCopied(null);
-    }
-  };
+  if (!institute) return null;
 
   return (
-    <div className="page">
-      <header className="page-header">
-        <div>
-          <p className="eyebrow">Kwaliteitsmonitor</p>
-          <h1>Vragenlijsten.</h1>
-          <p className="muted">
-            De zes formulieren van de Kwaliteitsmonitor. Coaches, leraren en schoolleiders vullen hun formulier hier in;
-            leerlingen krijgen een anonieme deellink.
-          </p>
-        </div>
-        <Link className="btn btn-secondary" href="/app/forms/resultaten">
-          <BarChart3 aria-hidden size={16} /> Resultaten
-        </Link>
-      </header>
+    <div className="page materials-page forms-page">
+      <div className="stack forms-stack">
+        <header className="materials-header">
+          <div className="materials-header__title">
+            <p className="eyebrow">Kwaliteitsmonitor</p>
+            <div className="materials-header__heading">
+              <h1>Kies een school</h1>
+              <span className="materials-header__count">{schoolCountLabel}</span>
+            </div>
+            <p className="muted forms-header-lead">
+              Je zet de vragenlijsten per school uit. Kies eerst een school; daarna open of sluit je de zes
+              formulieren van de twee instrumenten (Lesobservaties en PLC-scan).
+            </p>
+          </div>
 
-      <section className="stack">
-        <h2 className="eyebrow" style={{ marginBottom: 0 }}>Zelf invullen</h2>
-        {authForms.length === 0 ? (
-          <div className="card">
-            <p className="muted">Er zijn voor jouw rol geen vragenlijsten om zelf in te vullen.</p>
+          <div className="materials-header__controls">
+            <label className="materials-header__search">
+              <Search className="icon" size={17} aria-hidden />
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Zoek op schoolnaam of regio…"
+                aria-label="Zoeken"
+              />
+            </label>
+
+            <Select
+              value={sort}
+              onChange={(event) => setSort(event.target.value as SortKey)}
+              aria-label="Sorteren"
+              className="materials-header__control materials-header__select"
+            >
+              <option value="title">Schoolnaam (A–Z)</option>
+              <option value="status">Status</option>
+              <option value="open">Meeste open</option>
+            </Select>
+
+            <Select
+              value={region}
+              onChange={(event) => setRegion(event.target.value)}
+              aria-label="Regio"
+              className="materials-header__control materials-header__select"
+            >
+              <option value="all">Alle regio&apos;s</option>
+              {regions.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </Select>
+
+            <Select
+              value={status}
+              onChange={(event) => setStatus(event.target.value as StatusFilter)}
+              aria-label="Status"
+              className="materials-header__control materials-header__select"
+            >
+              <option value="all">Alle statussen</option>
+              <option value="active">Actief</option>
+              <option value="setup">In opstart</option>
+            </Select>
+
+            <Select
+              value={formsFilter}
+              onChange={(event) => setFormsFilter(event.target.value as FormsFilter)}
+              aria-label="Formulieren"
+              className="materials-header__control materials-header__select"
+            >
+              <option value="all">Alle formulieren</option>
+              <option value="has_open">Heeft open formulieren</option>
+              <option value="all_closed">Alles gesloten</option>
+            </Select>
+
+            <div className="materials-header__toggle" role="group" aria-label="Weergave">
+              <button
+                type="button"
+                aria-pressed={viewMode === "grid"}
+                onClick={() => setViewMode("grid")}
+              >
+                <LayoutGrid size={16} aria-hidden />
+                Grid
+              </button>
+              <button
+                type="button"
+                aria-pressed={viewMode === "list"}
+                onClick={() => setViewMode("list")}
+              >
+                <List size={16} aria-hidden />
+                Lijst
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {visibleSchools.length ? (
+          <div className={`course-grid${viewMode === "list" ? " course-grid--list" : ""}`}>
+            {visibleSchools.map((school) => (
+              <FormsSchoolCard
+                key={school.id}
+                school={school}
+                view={viewMode}
+                openCount={windowsLoading ? null : openCountForTenant(openCounts, school.id)}
+              />
+            ))}
           </div>
         ) : (
-          <div className="form-gallery">
-            {authForms.map((def) => {
-              const Icon = FORM_ICONS[def.key] ?? ClipboardList;
-              const count = questionCount(def);
-              const draft = drafts[def.key];
-              const pct = draft ? Math.round((draft.answered / Math.max(1, draft.total)) * 100) : 0;
-              return (
-                <article key={def.key} className="form-tile">
-                  <div className="form-tile__top">
-                    <span className="form-tile__icon">
-                      <Icon aria-hidden size={22} />
-                    </span>
-                    <Badge tone="info">{def.respondent}</Badge>
-                  </div>
-                  <div className="form-tile__body">
-                    <h3 className="form-tile__title">{def.title}</h3>
-                    <p className="form-tile__sub">{def.subtitle}</p>
-                  </div>
-                  <div className="form-tile__chips">
-                    <span className="form-chip">
-                      <ListChecks aria-hidden size={13} /> {count} vragen
-                    </span>
-                    <span className="form-chip">
-                      <Clock aria-hidden size={13} /> ± {estMinutes(count)} min
-                    </span>
-                    <span className="form-chip">{scaleLabel(def)}</span>
-                  </div>
-                  {draft ? (
-                    <div className="form-tile__resume">
-                      <PlayCircle aria-hidden size={16} />
-                      <span>Concept: {draft.answered}/{draft.total}</span>
-                      <span className="form-tile__resume-bar">
-                        <span style={{ width: `${pct}%` }} />
-                      </span>
-                    </div>
-                  ) : null}
-                  <div className="form-tile__foot">
-                    <Link className="btn btn-primary" href={`/app/forms/${def.key}`}>
-                      {draft ? "Verdergaan" : "Invullen"} <ArrowRight aria-hidden size={16} />
-                    </Link>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
+          <Card>
+            <div className="lesson-empty">
+              <span className="lesson-empty-icon" aria-hidden>
+                <Building2 size={26} />
+              </span>
+              <h3>Geen scholen gevonden</h3>
+              <p className="muted">Pas je zoekterm of filters aan om een school te vinden.</p>
+            </div>
+          </Card>
         )}
-      </section>
 
-      <section className="stack">
-        <h2 className="eyebrow" style={{ marginBottom: 0 }}>Anonieme leerling-links</h2>
-        <p className="muted" style={{ marginTop: 0 }}>
-          Deel deze links met leerlingen. Ze kunnen invullen zonder in te loggen; antwoorden komen binnen voor{" "}
-          <strong>{context.tenant.name}</strong>.
-        </p>
-        <div className="form-gallery">
-          {anonForms.map((def) => {
-            const Icon = FORM_ICONS[def.key] ?? ClipboardList;
-            const count = questionCount(def);
-            const url = `${origin}/feedback/${tenantId}/${def.key}`;
-            return (
-              <article key={def.key} className="form-tile form-tile--anon">
-                <div className="form-tile__top">
-                  <span className="form-tile__icon">
-                    <Icon aria-hidden size={22} />
-                  </span>
-                  <Badge tone="neutral">Anoniem</Badge>
-                </div>
-                <div className="form-tile__body">
-                  <h3 className="form-tile__title">{def.title}</h3>
-                  <p className="form-tile__sub">{def.subtitle}</p>
-                </div>
-                <div className="form-tile__chips">
-                  <span className="form-chip">
-                    <ListChecks aria-hidden size={13} /> {count} vragen
-                  </span>
-                  <span className="form-chip">
-                    <Clock aria-hidden size={13} /> ± {estMinutes(count)} min
-                  </span>
-                </div>
-                <div className="form-link-box" title={url}>
-                  {url || "Deellink laden…"}
-                </div>
-                <div className="form-tile__foot">
-                  <button type="button" className="btn btn-secondary" onClick={() => copyLink(def.key)}>
-                    {copied === def.key ? <Check aria-hidden size={16} /> : <Copy aria-hidden size={16} />}
-                    {copied === def.key ? "Gekopieerd" : "Kopieer link"}
-                  </button>
-                  <Link className="btn btn-ghost" href={`/feedback/${tenantId}/${def.key}`} target="_blank">
-                    Voorbeeld
-                  </Link>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </section>
+        <aside className="forms-notice">
+          <Building2 aria-hidden size={18} />
+          <p>
+            Je beheert nu vanuit <strong>{context.tenant.name}</strong>. Wat je openzet, wordt zichtbaar voor de
+            betreffende school; leerlingen vullen anoniem in via een deellink.
+          </p>
+        </aside>
+      </div>
     </div>
   );
 }

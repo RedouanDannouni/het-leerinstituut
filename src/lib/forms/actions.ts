@@ -64,6 +64,25 @@ function buildRow(def: FormDefinition, values: FormSubmissionValues): BuildResul
   return { row };
 }
 
+const INSTITUTE_ROLES = new Set(["admin", "planner", "coach", "school_opleider"]);
+
+/**
+ * Een inzending mag alleen als het Leerinstituut dit formulier voor deze school
+ * heeft opengezet. We lezen via de service-client zodat de check ook werkt voor
+ * anonieme inzendingen (geen sessie).
+ */
+async function isWindowOpen(tenantId: string, formKey: string): Promise<boolean> {
+  const service = getServiceClient();
+  if (!service) return false;
+  const { data } = await service
+    .from("form_windows")
+    .select("status")
+    .eq("tenant_id", tenantId)
+    .eq("form_key", formKey)
+    .maybeSingle();
+  return data?.status === "open";
+}
+
 export async function submitKwaliteitsmonitorForm(params: {
   formKey: string;
   tenantId?: string;
@@ -72,14 +91,18 @@ export async function submitKwaliteitsmonitorForm(params: {
   const def = getFormDefinition(params.formKey);
   if (!def) return { ok: false, error: "Onbekend formulier." };
 
+  const tenantId = params.tenantId;
+  if (!tenantId) return { ok: false, error: "Geen schoolomgeving meegegeven." };
+
+  if (!(await isWindowOpen(tenantId, def.key))) {
+    return { ok: false, error: "Dit formulier is op dit moment gesloten voor deze school." };
+  }
+
   const built = buildRow(def, params.values);
   if ("error" in built) return { ok: false, error: built.error };
   const { row } = built;
 
   if (def.access === "anon") {
-    const tenantId = params.tenantId;
-    if (!tenantId) return { ok: false, error: "Geen schoolomgeving meegegeven." };
-
     const service = getServiceClient();
     if (!service) return { ok: false, error: "Serverconfiguratie ontbreekt." };
 
@@ -104,12 +127,19 @@ export async function submitKwaliteitsmonitorForm(params: {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("tenant_id")
+    .select("role, tenant_id")
     .eq("id", user.id)
     .single();
 
+  // Toegangscontrole: instituutsstaf mag voor elke school invullen, een
+  // schoolgebruiker uitsluitend voor de eigen school.
+  const isInstitute = profile?.role ? INSTITUTE_ROLES.has(profile.role) : false;
+  if (!isInstitute && profile?.tenant_id !== tenantId) {
+    return { ok: false, error: "Je hebt geen toegang tot deze schoolomgeving." };
+  }
+
   row.created_by = user.id;
-  row.tenant_id = profile?.tenant_id ?? null;
+  row.tenant_id = tenantId;
 
   const { data, error } = await supabase.from(def.table).insert(row).select("id").single();
   if (error) return { ok: false, error: error.message };

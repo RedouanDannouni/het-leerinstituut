@@ -1,17 +1,36 @@
 import { Card } from "@/components/ui/Card";
 
-const points = [42, 52, 49, 61, 66, 72];
-const months = ["Jan", "Feb", "Mrt", "Apr", "Mei", "Jun"];
+const defaultPoints = [42, 52, 49, 61, 66, 72];
+const defaultLabels = ["Jan", "Feb", "Mrt", "Apr", "Mei", "Jun"];
 
 const W = 520;
 const H = 180;
 const PAD = 16;
 
-export function TrendLine({ title = "Trend" }: { title?: string }) {
-  const max = 100;
-  const stepX = (W - PAD * 2) / (points.length - 1);
+export interface TrendLineProps {
+  title?: string;
+  description?: string;
+  /** Reeks meetwaarden. Standaard een demo-reeks op schaal 0–100. */
+  points?: number[];
+  /** Labels onder de x-as; moet even lang zijn als `points`. */
+  labels?: string[];
+  /** Onder-/bovengrens van de y-as. Standaard 0–100. */
+  min?: number;
+  max?: number;
+}
+
+export function TrendLine({
+  title = "Trend",
+  description = "Rustige trendweergave met context, geen ranglijsten.",
+  points = defaultPoints,
+  labels = defaultLabels,
+  min = 0,
+  max = 100,
+}: TrendLineProps) {
+  const range = max - min || 1;
+  const stepX = (W - PAD * 2) / Math.max(1, points.length - 1);
   const toX = (i: number) => PAD + i * stepX;
-  const toY = (v: number) => H - PAD - (v / max) * (H - PAD * 2);
+  const toY = (v: number) => H - PAD - ((v - min) / range) * (H - PAD * 2);
 
   const line = points.map((p, i) => `${toX(i)},${toY(p)}`).join(" ");
   const area = `${PAD},${H - PAD} ${line} ${toX(points.length - 1)},${H - PAD}`;
@@ -23,13 +42,13 @@ export function TrendLine({ title = "Trend" }: { title?: string }) {
         <div>
           <h2>{title}</h2>
           <p className="muted" style={{ margin: 0 }}>
-            Rustige trendweergave met context, geen ranglijsten.
+            {description}
           </p>
         </div>
       </div>
       <svg
         role="img"
-        aria-label={`${title}: geleidelijk stijgende lijn over zes meetmomenten`}
+        aria-label={`${title}: trend over ${points.length} meetmomenten`}
         viewBox={`0 0 ${W} ${H}`}
         width="100%"
         height="200"
@@ -63,7 +82,7 @@ export function TrendLine({ title = "Trend" }: { title?: string }) {
         />
         {points.map((p, i) => (
           <circle
-            key={months[i]}
+            key={labels[i] ?? i}
             cx={toX(i)}
             cy={toY(p)}
             r={i === last ? 6 : 4}
@@ -74,8 +93,8 @@ export function TrendLine({ title = "Trend" }: { title?: string }) {
         ))}
       </svg>
       <div className="area-axis" aria-hidden>
-        {months.map((month) => (
-          <span key={month}>{month}</span>
+        {labels.map((label, i) => (
+          <span key={`${label}-${i}`}>{label}</span>
         ))}
       </div>
     </Card>
